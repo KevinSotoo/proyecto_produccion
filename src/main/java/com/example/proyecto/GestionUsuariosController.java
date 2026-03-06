@@ -3,6 +3,12 @@ package com.example.proyecto;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class GestionUsuariosController {
@@ -48,7 +54,32 @@ public class GestionUsuariosController {
     @FXML
     private TextField alturaField;
 
+    private static final File ARCHIVO_DATOS = new File(
+            System.getProperty("user.home") + "/gimnasio_usuarios.json"
+    );
+    private final ObjectMapper mapper = new ObjectMapper();
 
+    private void guardarDatos() {
+        try {
+            mapper.writerWithDefaultPrettyPrinter()
+                    .writeValue(ARCHIVO_DATOS, usuariosTable.getItems());
+        } catch (IOException e) {
+            mostrarAlerta("Error al guardar datos: " + e.getMessage());
+        }
+    }
+
+    private void cargarDatos() {
+        if (!ARCHIVO_DATOS.exists()) return;
+        try {
+            List<Usuario> usuarios = mapper.readValue(
+                    ARCHIVO_DATOS,
+                    new TypeReference<List<Usuario>>() {}
+            );
+            usuariosTable.getItems().addAll(usuarios);
+        } catch (IOException e) {
+            mostrarAlerta("Error al cargar datos: " + e.getMessage());
+        }
+    }
 
     @FXML
     public void initialize() {
@@ -77,6 +108,7 @@ public class GestionUsuariosController {
                 "Ganar masa muscular",
                 "Mantener peso"
         );
+        cargarDatos();
     }
     @FXML
     private void calcularRequerimientos() {
@@ -135,6 +167,7 @@ public class GestionUsuariosController {
             // 🔹 4. Crear usuario y agregar a tabla
             Usuario usuario = new Usuario(nombre, edad, peso, altura, objetivo, calorias);
             usuariosTable.getItems().add(usuario);
+            guardarDatos();
 
             limpiarCampos();
 
