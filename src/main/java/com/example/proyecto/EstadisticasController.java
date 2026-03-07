@@ -24,7 +24,9 @@ public class EstadisticasController {
     @FXML private Label gananciaLabel;
     @FXML private Label mantenerLabel;
 
-    private static final File ARCHIVO_DATOS = new File("data/gimnasio_usuarios.json");
+    private static final File ARCHIVO_DATOS = new File(
+            System.getProperty("user.dir") + "/data/gimnasio_usuarios.json"
+    );
     private final ObjectMapper mapper = new ObjectMapper();
 
     @FXML

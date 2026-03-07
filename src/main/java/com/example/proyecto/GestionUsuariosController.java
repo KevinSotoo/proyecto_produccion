@@ -58,12 +58,13 @@ public class GestionUsuariosController {
     private TextField alturaField;
 
     private static final File ARCHIVO_DATOS = new File(
-            System.getProperty("user.home") + "/gimnasio_usuarios.json"
+            System.getProperty("user.dir") + "/data/gimnasio_usuarios.json"
     );
     private final ObjectMapper mapper = new ObjectMapper();
 
     private void guardarDatos() {
         try {
+            ARCHIVO_DATOS.getParentFile().mkdirs(); // crea carpeta data/ si no existe
             mapper.writerWithDefaultPrettyPrinter()
                     .writeValue(ARCHIVO_DATOS, usuariosTable.getItems());
         } catch (IOException e) {

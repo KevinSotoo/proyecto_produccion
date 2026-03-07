@@ -1,0 +1,29 @@
+[ {
+  "nombre" : "Kevin",
+  "edad" : 20,
+  "peso" : 77.0,
+  "altura" : 174.0,
+  "objetivo" : "Ganar masa muscular",
+  "calorias" : 2754.0
+}, {
+  "nombre" : "Daniel",
+  "edad" : 21,
+  "peso" : 64.0,
+  "altura" : 180.0,
+  "objetivo" : "Ganar masa muscular",
+  "calorias" : 2323.0
+}, {
+  "nombre" : "Sebastian",
+  "edad" : 19,
+  "peso" : 50.0,
+  "altura" : 184.0,
+  "objetivo" : "Ganar masa muscular",
+  "calorias" : 1917.0
+}, {
+  "nombre" : "Nicolas",
+  "edad" : 21,
+  "peso" : 85.0,
+  "altura" : 174.0,
+  "objetivo" : "Perder grasa",
+  "calorias" : 2776.0
+} ]
