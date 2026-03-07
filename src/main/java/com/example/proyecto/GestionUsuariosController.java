@@ -1,6 +1,7 @@
 package com.example.proyecto;
 
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -9,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.fxml.FXMLLoader;
+import javafx.stage.Stage;
 
 
 public class GestionUsuariosController {
@@ -78,6 +81,19 @@ public class GestionUsuariosController {
             usuariosTable.getItems().addAll(usuarios);
         } catch (IOException e) {
             mostrarAlerta("Error al cargar datos: " + e.getMessage());
+        }
+    }
+    @FXML
+    private void irEstadisticas() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    Main.class.getResource("/com/example/proyecto/Estadisticas.fxml")
+            );
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) usuariosTable.getScene().getWindow();
+            stage.setScene(scene);
+        } catch (IOException e) {
+            mostrarAlerta("Error al abrir estadísticas: " + e.getMessage());
         }
     }
 

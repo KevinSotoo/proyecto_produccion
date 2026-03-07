@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefWidth="1100.0" prefHeight="700.0"
+            style="-fx-background-color: #F4F6F9;"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.proyecto.EstadisticasController">
+
+    <!-- TOP -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20"
+              style="-fx-background-color: linear-gradient(to right, #2C5FA8, #1F3F6D); -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10,0,0,3);">
+            <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+            <Label text="Gestión de Progreso y Retención en Gimnasio"
+                   style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Button text="Cerrar Sesión"
+                    style="-fx-background-color: white; -fx-text-fill: #1F3F6D; -fx-font-weight: bold; -fx-background-radius: 20;"/>
+        </HBox>
+    </top>
+
+    <!-- MENÚ LATERAL -->
+    <left>
+        <VBox spacing="12" prefWidth="200"
+              style="-fx-background-color: #1F3F6D;">
+            <padding><Insets top="25" left="15" right="15"/></padding>
+            <Button text="Gestión de Usuarios" maxWidth="Infinity"
+                    onAction="#volverGestion"
+                    style="-fx-background-radius: 10;"/>
+            <Button text="Causas de Abandono" maxWidth="Infinity"
+                    style="-fx-background-radius: 10;"/>
+            <Button text="Reportes" maxWidth="Infinity"
+                    style="-fx-background-radius: 10;"/>
+            <Button text="Estadísticas" maxWidth="Infinity"
+                    style="-fx-background-color: #2C5FA8; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10;"/>
+            <Button text="Salir" maxWidth="Infinity"
+                    style="-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-background-radius: 10;"/>
+        </VBox>
+    </left>
+
+    <!-- CENTRO -->
+    <center>
+        <VBox spacing="25" alignment="TOP_CENTER">
+            <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
+
+            <Label text="Estadísticas de Usuarios"
+                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+
+            <!-- Gráfica de pastel -->
+            <PieChart fx:id="pieChart" prefHeight="380" prefWidth="500"
+                      style="-fx-background-color: white; -fx-background-radius: 15;
+                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8,0,0,2);"/>
+
+            <!-- Resumen -->
+            <HBox spacing="30" alignment="CENTER"
+                  style="-fx-background-color: white; -fx-background-radius: 15;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8,0,0,2);">
+                <padding><Insets top="20" right="30" bottom="20" left="30"/></padding>
+
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="👥"  style="-fx-font-size: 28px;"/>
+                    <Label fx:id="totalUsuariosLabel" text="Total usuarios: 0"
+                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                </VBox>
+
+                <Separator orientation="VERTICAL"/>
+
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="🔥" style="-fx-font-size: 28px;"/>
+                    <Label fx:id="perdidaLabel" text="Perder grasa: 0"
+                           style="-fx-font-size: 13px; -fx-text-fill: #E74C3C;"/>
+                </VBox>
+
+                <Separator orientation="VERTICAL"/>
+
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="💪" style="-fx-font-size: 28px;"/>
+                    <Label fx:id="gananciaLabel" text="Ganar masa muscular: 0"
+                           style="-fx-font-size: 13px; -fx-text-fill: #2ECC71;"/>
+                </VBox>
+
+                <Separator orientation="VERTICAL"/>
+
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="⚖️" style="-fx-font-size: 28px;"/>
+                    <Label fx:id="mantenerLabel" text="Mantener peso: 0"
+                           style="-fx-font-size: 13px; -fx-text-fill: #3498DB;"/>
+                </VBox>
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>
