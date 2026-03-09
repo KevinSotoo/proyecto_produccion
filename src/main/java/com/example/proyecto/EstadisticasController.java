@@ -110,6 +110,7 @@ public class EstadisticasController {
             );
             Scene scene = new Scene(loader.load());
             Stage stage = (Stage) pieChart.getScene().getWindow();
+            stage.setMaximized(false);
             stage.setScene(scene);
             stage.setMaximized(true);
         } catch (IOException e) {

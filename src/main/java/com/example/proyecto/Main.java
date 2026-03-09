@@ -18,6 +18,7 @@ public class Main extends Application {
         Scene scene = new Scene(loader.load());
 
         stage.setTitle("Sistema Gimnasio");
+        stage.setMaximized(false);
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();

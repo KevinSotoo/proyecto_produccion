@@ -164,6 +164,7 @@ public class GestionUsuariosController {
             );
             Scene scene = new Scene(loader.load());
             Stage stage = (Stage) usuariosTable.getScene().getWindow();
+            stage.setMaximized(false);
             stage.setScene(scene);
             stage.setMaximized(true);
         } catch (IOException e) {
