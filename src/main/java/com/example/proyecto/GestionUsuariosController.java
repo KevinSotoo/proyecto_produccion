@@ -93,6 +93,7 @@ public class GestionUsuariosController {
             Scene scene = new Scene(loader.load());
             Stage stage = (Stage) usuariosTable.getScene().getWindow();
             stage.setScene(scene);
+            stage.setMaximized(true);
         } catch (IOException e) {
             mostrarAlerta("Error al abrir estadísticas: " + e.getMessage());
         }
@@ -182,7 +183,7 @@ public class GestionUsuariosController {
             calorias = Math.round(calorias);
 
             // 🔹 4. Crear usuario y agregar a tabla
-            Usuario usuario = new Usuario(nombre, edad, peso, altura, objetivo, calorias);
+            Usuario usuario = new Usuario(nombre, edad, peso, altura, objetivo, calorias, sexo);
             usuariosTable.getItems().add(usuario);
             guardarDatos();
 

@@ -4,131 +4,150 @@
   "peso" : 77.0,
   "altura" : 174.0,
   "objetivo" : "Ganar masa muscular",
-  "calorias" : 2754.0
+  "calorias" : 2754.0,
+  "sexo" : "Masculino"
 }, {
   "nombre" : "Daniel",
   "edad" : 21,
   "peso" : 64.0,
   "altura" : 180.0,
   "objetivo" : "Ganar masa muscular",
-  "calorias" : 2323.0
+  "calorias" : 2323.0,
+  "sexo" : "Masculino"
 }, {
   "nombre" : "Sebastian",
   "edad" : 19,
   "peso" : 50.0,
   "altura" : 184.0,
   "objetivo" : "Ganar masa muscular",
-  "calorias" : 1917.0
+  "calorias" : 1917.0,
+  "sexo" : "Masculino"
 }, {
   "nombre" : "Nicolas",
   "edad" : 21,
-  "peso" : 85.0,
+  "peso" : 70.0,
   "altura" : 174.0,
-  "objetivo" : "Perder grasa",
-  "calorias" : 2776.0
+  "objetivo" : "Ganar masa muscular",
+  "calorias" : 2776.0,
+  "sexo" : "Masculino"
 }, {
   "nombre" : "Andres",
   "edad" : 23,
   "peso" : 90.0,
   "altura" : 178.0,
   "objetivo" : "Perder grasa",
-  "calorias" : 2541.0
+  "calorias" : 2541.0,
+  "sexo" : "Masculino"
 }, {
   "nombre" : "Camila",
   "edad" : 22,
   "peso" : 58.0,
   "altura" : 162.0,
   "objetivo" : "Mantener peso",
-  "calorias" : 1980.0
+  "calorias" : 1980.0,
+  "sexo" : "Femenino"
 }, {
   "nombre" : "Valeria",
   "edad" : 20,
   "peso" : 52.0,
   "altura" : 158.0,
   "objetivo" : "Ganar masa muscular",
-  "calorias" : 2150.0
+  "calorias" : 2150.0,
+  "sexo" : "Femenino"
 }, {
   "nombre" : "Miguel",
   "edad" : 25,
   "peso" : 78.0,
   "altura" : 176.0,
   "objetivo" : "Mantener peso",
-  "calorias" : 2620.0
+  "calorias" : 2620.0,
+  "sexo" : "Masculino"
 }, {
   "nombre" : "Laura",
   "edad" : 19,
   "peso" : 61.0,
   "altura" : 165.0,
   "objetivo" : "Perder grasa",
-  "calorias" : 1750.0
+  "calorias" : 1750.0,
+  "sexo" : "Femenino"
 }, {
   "nombre" : "Santiago",
   "edad" : 24,
   "peso" : 95.0,
   "altura" : 182.0,
   "objetivo" : "Perder grasa",
-  "calorias" : 2890.0
+  "calorias" : 2890.0,
+  "sexo" : "Masculino"
 }, {
   "nombre" : "Isabella",
   "edad" : 21,
   "peso" : 55.0,
   "altura" : 160.0,
   "objetivo" : "Mantener peso",
-  "calorias" : 1870.0
+  "calorias" : 1870.0,
+  "sexo" : "Femenino"
 }, {
   "nombre" : "Juan",
   "edad" : 28,
   "peso" : 82.0,
   "altura" : 179.0,
   "objetivo" : "Ganar masa muscular",
-  "calorias" : 3100.0
+  "calorias" : 3100.0,
+  "sexo" : "Masculino"
 }, {
   "nombre" : "Daniela",
   "edad" : 22,
   "peso" : 67.0,
   "altura" : 168.0,
   "objetivo" : "Perder grasa",
-  "calorias" : 1920.0
+  "calorias" : 1920.0,
+  "sexo" : "Femenino"
 }, {
   "nombre" : "Carlos",
   "edad" : 30,
   "peso" : 88.0,
   "altura" : 175.0,
   "objetivo" : "Mantener peso",
-  "calorias" : 2710.0
+  "calorias" : 2710.0,
+  "sexo" : "Masculino"
 }, {
   "nombre" : "Sofia",
   "edad" : 18,
   "peso" : 49.0,
   "altura" : 155.0,
   "objetivo" : "Ganar masa muscular",
-  "calorias" : 2040.0
+  "calorias" : 2040.0,
+  "sexo" : "Femenino"
 }, {
   "nombre" : "Mateo",
   "edad" : 26,
   "peso" : 73.0,
   "altura" : 177.0,
   "objetivo" : "Mantener peso",
-  "calorias" : 2560.0
+  "calorias" : 2560.0,
+  "sexo" : "Masculino"
 }, {
   "nombre" : "Alejandra",
   "edad" : 23,
   "peso" : 70.0,
   "altura" : 170.0,
   "objetivo" : "Perder grasa",
-  "calorias" : 1830.0
+  "calorias" : 1830.0,
+  "sexo" : "Femenino"
 }, {
   "nombre" : "Felipe",
   "edad" : 27,
   "peso" : 68.0,
   "altura" : 173.0,
   "objetivo" : "Ganar masa muscular",
-  "calorias" : 2980.0
+  "calorias" : 2980.0,
+  "sexo" : "Masculino"
 }, {
   "nombre" : "Natalia",
   "edad" : 20,
   "peso" : 54.0,
   "altura" : 161.0,
   "objetivo" : "Mantener peso",
-  "calorias" : 1790.0
+  "calorias" : 1790.0,
+  "sexo" : "Femenino"
 } ]

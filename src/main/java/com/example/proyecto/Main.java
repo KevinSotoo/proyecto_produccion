@@ -19,6 +19,7 @@ public class Main extends Application {
 
         stage.setTitle("Sistema Gimnasio");
         stage.setScene(scene);
+        stage.setMaximized(true);
         stage.show();
     }
 

@@ -43,57 +43,103 @@
         </VBox>
     </left>
 
-    <!-- CENTRO -->
+    <!-- CENTRO — todo dentro de un solo VBox -->
     <center>
-        <VBox spacing="25" alignment="TOP_CENTER">
-            <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+            <content>
+                <VBox spacing="25" alignment="TOP_CENTER">
+                    <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
 
-            <Label text="Estadísticas de Usuarios"
-                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                    <Label text="Estadísticas de Usuarios"
+                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
 
-            <!-- Gráfica de pastel -->
-            <PieChart fx:id="pieChart" prefHeight="380" prefWidth="500"
-                      style="-fx-background-color: white; -fx-background-radius: 15;
-                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8,0,0,2);"/>
+                    <!-- Gráfica de pastel -->
+                    <PieChart fx:id="pieChart" prefHeight="350" prefWidth="500"
+                              style="-fx-background-color: white; -fx-background-radius: 15;
+                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8,0,0,2);"/>
 
-            <!-- Resumen -->
-            <HBox spacing="30" alignment="CENTER"
-                  style="-fx-background-color: white; -fx-background-radius: 15;
-                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8,0,0,2);">
-                <padding><Insets top="20" right="30" bottom="20" left="30"/></padding>
+                    <!-- Resumen objetivos -->
+                    <HBox spacing="30" alignment="CENTER"
+                          style="-fx-background-color: white; -fx-background-radius: 15;
+                                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8,0,0,2);">
+                        <padding><Insets top="20" right="30" bottom="20" left="30"/></padding>
 
-                <VBox alignment="CENTER" spacing="5">
-                    <Label text="👥"  style="-fx-font-size: 28px;"/>
-                    <Label fx:id="totalUsuariosLabel" text="Total usuarios: 0"
-                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                        <VBox alignment="CENTER" spacing="5">
+                            <Label text="👥" style="-fx-font-size: 28px;"/>
+                            <Label fx:id="totalUsuariosLabel" text="Total usuarios: 0"
+                                   style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                        </VBox>
+
+                        <Separator orientation="VERTICAL"/>
+
+                        <VBox alignment="CENTER" spacing="5">
+                            <Label text="🔥" style="-fx-font-size: 28px;"/>
+                            <Label fx:id="perdidaLabel" text="Perder grasa: 0"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #E74C3C;"/>
+                        </VBox>
+
+                        <Separator orientation="VERTICAL"/>
+
+                        <VBox alignment="CENTER" spacing="5">
+                            <Label text="💪" style="-fx-font-size: 28px;"/>
+                            <Label fx:id="gananciaLabel" text="Ganar masa muscular: 0"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #2ECC71;"/>
+                        </VBox>
+
+                        <Separator orientation="VERTICAL"/>
+
+                        <VBox alignment="CENTER" spacing="5">
+                            <Label text="⚖️" style="-fx-font-size: 28px;"/>
+                            <Label fx:id="mantenerLabel" text="Mantener peso: 0"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #3498DB;"/>
+                        </VBox>
+                    </HBox>
+
+                    <Separator/>
+
+                    <!-- Promedios por sexo -->
+                    <Label text="Promedios por Sexo"
+                           style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+
+                    <HBox spacing="30" alignment="CENTER">
+
+                        <!-- Masculino -->
+                        <VBox spacing="10" alignment="CENTER"
+                              style="-fx-background-color: white; -fx-background-radius: 15;
+                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8,0,0,2);">
+                            <padding><Insets top="20" right="40" bottom="20" left="40"/></padding>
+                            <Label text="♂ Masculino"
+                                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2C5FA8;"/>
+                            <Separator/>
+                            <Label fx:id="edadMasculinoLabel" text="Edad: -"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #2C3E50;"/>
+                            <Label fx:id="pesoMasculinoLabel" text="Peso: -"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #2C3E50;"/>
+                            <Label fx:id="alturaMasculinoLabel" text="Altura: -"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #2C3E50;"/>
+                        </VBox>
+
+                        <!-- Femenino -->
+                        <VBox spacing="10" alignment="CENTER"
+                              style="-fx-background-color: white; -fx-background-radius: 15;
+                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8,0,0,2);">
+                            <padding><Insets top="20" right="40" bottom="20" left="40"/></padding>
+                            <Label text="♀ Femenino"
+                                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #E91E8C;"/>
+                            <Separator/>
+                            <Label fx:id="edadFemeninoLabel" text="Edad: -"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #2C3E50;"/>
+                            <Label fx:id="pesoFemeninoLabel" text="Peso: -"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #2C3E50;"/>
+                            <Label fx:id="alturaFemeninoLabel" text="Altura: -"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #2C3E50;"/>
+                        </VBox>
+
+                    </HBox>
+
                 </VBox>
-
-                <Separator orientation="VERTICAL"/>
-
-                <VBox alignment="CENTER" spacing="5">
-                    <Label text="🔥" style="-fx-font-size: 28px;"/>
-                    <Label fx:id="perdidaLabel" text="Perder grasa: 0"
-                           style="-fx-font-size: 13px; -fx-text-fill: #E74C3C;"/>
-                </VBox>
-
-                <Separator orientation="VERTICAL"/>
-
-                <VBox alignment="CENTER" spacing="5">
-                    <Label text="💪" style="-fx-font-size: 28px;"/>
-                    <Label fx:id="gananciaLabel" text="Ganar masa muscular: 0"
-                           style="-fx-font-size: 13px; -fx-text-fill: #2ECC71;"/>
-                </VBox>
-
-                <Separator orientation="VERTICAL"/>
-
-                <VBox alignment="CENTER" spacing="5">
-                    <Label text="⚖️" style="-fx-font-size: 28px;"/>
-                    <Label fx:id="mantenerLabel" text="Mantener peso: 0"
-                           style="-fx-font-size: 13px; -fx-text-fill: #3498DB;"/>
-                </VBox>
-            </HBox>
-
-        </VBox>
+            </content>
+        </ScrollPane>
     </center>
 
 </BorderPane>
