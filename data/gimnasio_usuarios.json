@@ -8,7 +8,7 @@
   "sexo" : "Masculino"
 }, {
   "nombre" : "Daniel",
-  "edad" : 21,
+  "edad" : 22,
   "peso" : 64.0,
   "altura" : 180.0,
   "objetivo" : "Ganar masa muscular",
@@ -149,5 +149,21 @@
   "altura" : 170.0,
   "objetivo" : "Perder grasa",
   "calorias" : 1661.0,
+  "sexo" : "Masculino"
+}, {
+  "nombre" : "Ana",
+  "edad" : 22,
+  "peso" : 57.0,
+  "altura" : 160.0,
+  "objetivo" : "Ganar masa muscular",
+  "calorias" : 2186.0,
+  "sexo" : "Femenino"
+}, {
+  "nombre" : "Luis",
+  "edad" : 20,
+  "peso" : 79.0,
+  "altura" : 179.0,
+  "objetivo" : "Ganar masa muscular",
+  "calorias" : 3211.0,
   "sexo" : "Masculino"
 } ]

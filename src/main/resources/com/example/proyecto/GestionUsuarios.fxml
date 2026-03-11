@@ -8,7 +8,7 @@
             style="-fx-background-color: #F4F6F9;"
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.proyecto.GestionUsuariosController">
+            fx:controller="com.example.proyecto.controller.GestionUsuariosController">
 
     <!-- TOP -->
     <top>

@@ -1,7 +1,8 @@
-package com.example.proyecto;
+package com.example.proyecto.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.proyecto.Main;
+import com.example.proyecto.model.Usuario;
+import com.example.proyecto.service.UsuarioService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,11 +11,9 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class EstadisticasController {
 
@@ -23,8 +22,6 @@ public class EstadisticasController {
     @FXML private Label perdidaLabel;
     @FXML private Label gananciaLabel;
     @FXML private Label mantenerLabel;
-
-    // Labels promedios por sexo
     @FXML private Label edadMasculinoLabel;
     @FXML private Label pesoMasculinoLabel;
     @FXML private Label alturaMasculinoLabel;
@@ -32,10 +29,7 @@ public class EstadisticasController {
     @FXML private Label pesoFemeninoLabel;
     @FXML private Label alturaFemeninoLabel;
 
-    private static final File ARCHIVO_DATOS = new File(
-            System.getProperty("user.dir") + "/data/gimnasio_usuarios.json"
-    );
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final UsuarioService service = new UsuarioService();
 
     @FXML
     public void initialize() {
@@ -43,24 +37,17 @@ public class EstadisticasController {
     }
 
     private void cargarEstadisticas() {
-        if (!ARCHIVO_DATOS.exists()) return;
-
         try {
-            List<Usuario> usuarios = mapper.readValue(
-                    ARCHIVO_DATOS,
-                    new TypeReference<List<Usuario>>() {}
-            );
-
+            List<Usuario> usuarios = service.cargar();
             if (usuarios.isEmpty()) return;
 
             // ── Pastel por objetivo ──
-            Map<String, Long> conteo = usuarios.stream()
-                    .collect(Collectors.groupingBy(Usuario::getObjetivo, Collectors.counting()));
+            Map<String, Long> conteo = service.contarPorObjetivo(usuarios);
 
             var datos = FXCollections.observableArrayList(
                     conteo.entrySet().stream()
                             .map(e -> new PieChart.Data(e.getKey() + " (" + e.getValue() + ")", e.getValue()))
-                            .collect(Collectors.toList())
+                            .toList()
             );
             pieChart.setData(datos);
             pieChart.setTitle("Distribución por Objetivo");
@@ -72,9 +59,7 @@ public class EstadisticasController {
             mantenerLabel.setText("Mantener peso: " + conteo.getOrDefault("Mantener peso", 0L));
 
             // ── Promedios por sexo ──
-            Map<String, List<Usuario>> porSexo = usuarios.stream()
-                    .filter(u -> u.getSexo() != null)
-                    .collect(Collectors.groupingBy(Usuario::getSexo));
+            Map<String, List<Usuario>> porSexo = service.agruparPorSexo(usuarios);
 
             List<Usuario> masculinos = porSexo.getOrDefault("Masculino", List.of());
             List<Usuario> femeninos  = porSexo.getOrDefault("Femenino",  List.of());
