@@ -9,18 +9,12 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-
-
         FXMLLoader loader = new FXMLLoader(
-                Main.class.getResource("/com/example/proyecto/GestionUsuarios.fxml")
+                Main.class.getResource("/com/example/proyecto/Login.fxml")
         );
-
         Scene scene = new Scene(loader.load());
-
         stage.setTitle("Sistema Gimnasio");
-        stage.setMaximized(false);
         stage.setScene(scene);
-        stage.setMaximized(true);
         stage.show();
     }
 

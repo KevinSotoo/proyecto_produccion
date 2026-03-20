@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefWidth="500.0" prefHeight="450.0"
+            style="-fx-background-color: #F4F6F9;"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.proyecto.controller.RegistroController">
+
+    <center>
+        <VBox spacing="20" alignment="CENTER">
+            <padding><Insets top="40" right="60" bottom="40" left="60"/></padding>
+
+            <Label text="Sistema Gimnasio"
+                   style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1F3F6D;"/>
+
+            <Label text="Crear Cuenta"
+                   style="-fx-font-size: 16px; -fx-text-fill: #2C3E50;"/>
+
+            <VBox spacing="8">
+                <Label text="Usuario:" style="-fx-text-fill: #2C3E50; -fx-font-weight: bold;"/>
+                <TextField fx:id="usernameField" promptText="Elige un nombre de usuario"
+                           style="-fx-background-radius: 10; -fx-pref-height: 35;"/>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label text="Contraseña:" style="-fx-text-fill: #2C3E50; -fx-font-weight: bold;"/>
+                <PasswordField fx:id="passwordField" promptText="Crea una contraseña"
+                               style="-fx-background-radius: 10; -fx-pref-height: 35;"/>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label text="Confirmar Contraseña:" style="-fx-text-fill: #2C3E50; -fx-font-weight: bold;"/>
+                <PasswordField fx:id="confirmarPasswordField" promptText="Repite la contraseña"
+                               style="-fx-background-radius: 10; -fx-pref-height: 35;"/>
+            </VBox>
+
+            <Button text="Registrarse"
+                    onAction="#registrar"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: #2ECC71; -fx-text-fill: white;
+                           -fx-font-weight: bold; -fx-background-radius: 10;
+                           -fx-pref-height: 40; -fx-font-size: 14px;"/>
+
+            <Button text="Volver al Login"
+                    onAction="#volverLogin"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: transparent; -fx-text-fill: #2C5FA8;
+                           -fx-font-weight: bold; -fx-border-color: #2C5FA8;
+                           -fx-border-radius: 10; -fx-background-radius: 10;
+                           -fx-pref-height: 35;"/>
+
+            <Label fx:id="mensajeLabel" text=""
+                   style="-fx-font-size: 12px;"/>
+
+        </VBox>
+    </center>
+
+</BorderPane>

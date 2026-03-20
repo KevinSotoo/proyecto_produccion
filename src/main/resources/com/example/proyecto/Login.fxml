@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefWidth="500.0" prefHeight="400.0"
+            style="-fx-background-color: #F4F6F9;"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.proyecto.controller.LoginController">
+
+    <center>
+        <VBox spacing="20" alignment="CENTER">
+            <padding><Insets top="40" right="60" bottom="40" left="60"/></padding>
+
+            <Label text="Sistema Gimnasio"
+                   style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1F3F6D;"/>
+
+            <Label text="Iniciar Sesión"
+                   style="-fx-font-size: 16px; -fx-text-fill: #2C3E50;"/>
+
+            <VBox spacing="8">
+                <Label text="Usuario:" style="-fx-text-fill: #2C3E50; -fx-font-weight: bold;"/>
+                <TextField fx:id="usernameField" promptText="Ingresa tu usuario"
+                           style="-fx-background-radius: 10; -fx-pref-height: 35;"/>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label text="Contraseña:" style="-fx-text-fill: #2C3E50; -fx-font-weight: bold;"/>
+                <PasswordField fx:id="passwordField" promptText="Ingresa tu contraseña"
+                               style="-fx-background-radius: 10; -fx-pref-height: 35;"/>
+            </VBox>
+
+            <Button text="Ingresar"
+                    onAction="#iniciarSesion"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: #2C5FA8; -fx-text-fill: white;
+                           -fx-font-weight: bold; -fx-background-radius: 10;
+                           -fx-pref-height: 40; -fx-font-size: 14px;"/>
+            <Button text="¿No tienes cuenta? Regístrate"
+                    onAction="#irRegistro"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: transparent; -fx-text-fill: #2C5FA8;
+               -fx-font-weight: bold; -fx-border-color: #2C5FA8;
+               -fx-border-radius: 10; -fx-background-radius: 10;
+               -fx-pref-height: 35;"/>
+
+            <Label fx:id="errorLabel" text=""
+                   style="-fx-text-fill: #E74C3C; -fx-font-size: 12px;"/>
+        </VBox>
+    </center>
+
+</BorderPane>

@@ -15,6 +15,9 @@ import java.util.List;
 
 public class GestionUsuariosController {
 
+    private String rolActual = "usuario";
+    @FXML private Button btnEliminar;
+    @FXML private Button btnEstadisticas;
     @FXML private TableView<Usuario> usuariosTable;
     @FXML private ComboBox<String> actividadBox;
     @FXML private TextField edadField;
@@ -178,5 +181,17 @@ public class GestionUsuariosController {
         actividadBox.setValue(null);
         sexoComboBox.setValue(null);
         objetivoComboBox.setValue(null);
+    }
+    public void setRol(String rol) {
+        this.rolActual = rol;
+        configurarVistaPorRol();
+    }
+    private void configurarVistaPorRol() {
+        if (rolActual.equals("usuario")) {
+            btnEliminar.setVisible(false);
+            btnEstadisticas.setVisible(false);
+            btnEliminar.setManaged(false);
+            btnEstadisticas.setManaged(false);
+        }
     }
 }
