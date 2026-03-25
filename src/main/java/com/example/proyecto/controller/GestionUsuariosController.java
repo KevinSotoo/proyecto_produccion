@@ -16,6 +16,8 @@ import java.util.List;
 public class GestionUsuariosController {
 
     private String rolActual = "usuario";
+    private String documentoActual = null;
+
     @FXML private Button btnEliminar;
     @FXML private Button btnEstadisticas;
     @FXML private TableView<Usuario> usuariosTable;
@@ -28,11 +30,13 @@ public class GestionUsuariosController {
     @FXML private TableColumn<Usuario, String> objetivoColumn;
     @FXML private TableColumn<Usuario, Double> caloriasColumn;
     @FXML private TableColumn<Usuario, String> sexoColumn;
+    @FXML private TableColumn<Usuario, String> documentoColumn;
     @FXML private ComboBox<String> sexoComboBox;
     @FXML private ComboBox<String> objetivoComboBox;
     @FXML private TextField nombreField;
     @FXML private TextField pesoField;
     @FXML private TextField alturaField;
+    @FXML private TextField documentoField;
 
     private final UsuarioService service = new UsuarioService();
 
@@ -45,6 +49,7 @@ public class GestionUsuariosController {
         objetivoColumn.setCellValueFactory(new PropertyValueFactory<>("objetivo"));
         caloriasColumn.setCellValueFactory(new PropertyValueFactory<>("calorias"));
         sexoColumn.setCellValueFactory(new PropertyValueFactory<>("sexo"));
+        documentoColumn.setCellValueFactory(new PropertyValueFactory<>("documento"));
 
         actividadBox.getItems().addAll(
                 "Sedentario", "Ligero", "Moderado", "Intenso", "Muy intenso"
@@ -57,8 +62,25 @@ public class GestionUsuariosController {
         usuariosTable.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldVal, newVal) -> { if (newVal != null) cargarEnFormulario(newVal); }
         );
+    }
 
+    public void setDocumentoActual(String documento) {
+        this.documentoActual = documento;
+    }
+
+    public void setRol(String rol) {
+        this.rolActual = rol;
+        configurarVistaPorRol();
         cargarDatos();
+    }
+
+    private void configurarVistaPorRol() {
+        if (rolActual.equals("usuario")) {
+            btnEliminar.setVisible(false);
+            btnEstadisticas.setVisible(false);
+            btnEliminar.setManaged(false);
+            btnEstadisticas.setManaged(false);
+        }
     }
 
     private void cargarEnFormulario(Usuario u) {
@@ -68,6 +90,7 @@ public class GestionUsuariosController {
         alturaField.setText(String.valueOf(u.getAltura()));
         sexoComboBox.setValue(u.getSexo());
         objetivoComboBox.setValue(u.getObjetivo());
+        documentoField.setText(u.getDocumento() != null ? u.getDocumento() : "");
     }
 
     @FXML
@@ -80,10 +103,16 @@ public class GestionUsuariosController {
             String actividad = actividadBox.getValue();
             String objetivo = objetivoComboBox.getValue();
             String sexo = sexoComboBox.getValue();
+            String documento = documentoField.getText().trim();
+
+            if (documento.isEmpty()) {
+                mostrarAlerta("El número de documento es obligatorio.");
+                return;
+            }
 
             double calorias = service.calcularCalorias(peso, altura, edad, sexo, actividad, objetivo);
 
-            Usuario usuario = new Usuario(nombre, edad, peso, altura, objetivo, calorias, sexo);
+            Usuario usuario = new Usuario(nombre, edad, peso, altura, objetivo, calorias, sexo, documento);
             usuariosTable.getItems().add(usuario);
             guardarDatos();
             limpiarCampos();
@@ -107,6 +136,7 @@ public class GestionUsuariosController {
             seleccionado.setAltura(Double.parseDouble(alturaField.getText()));
             seleccionado.setObjetivo(objetivoComboBox.getValue());
             seleccionado.setSexo(sexoComboBox.getValue());
+            seleccionado.setDocumento(documentoField.getText().trim());
             usuariosTable.refresh();
             guardarDatos();
             limpiarCampos();
@@ -144,8 +174,17 @@ public class GestionUsuariosController {
 
     @FXML
     private void salir() {
-        Stage stage = (Stage) usuariosTable.getScene().getWindow();
-        stage.close();
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    Main.class.getResource("/com/example/proyecto/Login.fxml")
+            );
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) usuariosTable.getScene().getWindow();
+            stage.setMaximized(false);
+            stage.setScene(scene);
+        } catch (IOException e) {
+            mostrarAlerta("Error al cerrar sesión: " + e.getMessage());
+        }
     }
 
     private void guardarDatos() {
@@ -159,7 +198,13 @@ public class GestionUsuariosController {
     private void cargarDatos() {
         try {
             List<Usuario> usuarios = service.cargar();
-            usuariosTable.getItems().addAll(usuarios);
+            if (rolActual.equals("usuario") && documentoActual != null) {
+                usuarios.stream()
+                        .filter(u -> documentoActual.equals(u.getDocumento()))
+                        .forEach(u -> usuariosTable.getItems().add(u));
+            } else {
+                usuariosTable.getItems().addAll(usuarios);
+            }
         } catch (IOException e) {
             mostrarAlerta("Error al cargar datos: " + e.getMessage());
         }
@@ -178,20 +223,9 @@ public class GestionUsuariosController {
         edadField.clear();
         pesoField.clear();
         alturaField.clear();
+        documentoField.clear();
         actividadBox.setValue(null);
         sexoComboBox.setValue(null);
         objetivoComboBox.setValue(null);
-    }
-    public void setRol(String rol) {
-        this.rolActual = rol;
-        configurarVistaPorRol();
-    }
-    private void configurarVistaPorRol() {
-        if (rolActual.equals("usuario")) {
-            btnEliminar.setVisible(false);
-            btnEstadisticas.setVisible(false);
-            btnEliminar.setManaged(false);
-            btnEstadisticas.setManaged(false);
-        }
     }
 }

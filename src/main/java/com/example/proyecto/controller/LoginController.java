@@ -33,14 +33,14 @@ public class LoginController {
 
         // Verificar admin hardcodeado
         if (username.equals("admin") && password.equals("1234")) {
-            abrirPantalla("/com/example/proyecto/GestionUsuarios.fxml", "admin");
+            abrirPantalla("/com/example/proyecto/GestionUsuarios.fxml", "admin", null);
             return;
         }
 
         // Verificar usuario en JSON
         CuentaUsuario cuenta = cuentaService.buscarCuenta(username, password);
         if (cuenta != null) {
-            abrirPantalla("/com/example/proyecto/GestionUsuarios.fxml", cuenta.getRol());
+            abrirPantalla("/com/example/proyecto/GestionUsuarios.fxml", cuenta.getRol(), cuenta.getUsername());
         } else {
             errorLabel.setText("Usuario o contraseña incorrectos.");
         }
@@ -59,20 +59,34 @@ public class LoginController {
         }
     }
 
-    private void abrirPantalla(String fxml, String rol) {
+    private void abrirPantalla(String fxml, String rol, String documento) {
         try {
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource(fxml));
-            Scene scene = new Scene(loader.load());
-
-            // Pasar el rol al controller destino
-            GestionUsuariosController controller = loader.getController();
-            controller.setRol(rol);
-
-            Stage stage = (Stage) usernameField.getScene().getWindow();
-            stage.setMaximized(false);
-            stage.setScene(scene);
-            stage.setMaximized(true);
+            if (rol.equals("usuario")) {
+                // Abrir vista de usuario
+                FXMLLoader loader = new FXMLLoader(
+                        Main.class.getResource("/com/example/proyecto/VistaUsuario.fxml")
+                );
+                Scene scene = new Scene(loader.load());
+                VistaUsuarioController controller = loader.getController();
+                controller.setDocumento(documento);
+                Stage stage = (Stage) usernameField.getScene().getWindow();
+                stage.setMaximized(false);
+                stage.setScene(scene);
+                stage.setMaximized(true);
+            } else {
+                // Abrir vista de admin
+                FXMLLoader loader = new FXMLLoader(Main.class.getResource(fxml));
+                Scene scene = new Scene(loader.load());
+                GestionUsuariosController controller = loader.getController();
+                controller.setRol(rol);
+                controller.setDocumentoActual(documento);
+                Stage stage = (Stage) usernameField.getScene().getWindow();
+                stage.setMaximized(false);
+                stage.setScene(scene);
+                stage.setMaximized(true);
+            }
         } catch (IOException e) {
+            e.printStackTrace();
             errorLabel.setText("Error al abrir el sistema: " + e.getMessage());
         }
 

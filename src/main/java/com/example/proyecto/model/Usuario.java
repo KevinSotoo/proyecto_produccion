@@ -9,10 +9,11 @@ public class Usuario {
     private String objetivo;
     private double calorias;
     private String sexo;
+    private String documento;
 
     public Usuario() {}
 
-    public Usuario(String nombre, int edad, double peso, double altura, String objetivo, double calorias, String sexo) {
+    public Usuario(String nombre, int edad, double peso, double altura, String objetivo, double calorias, String sexo, String documento) {
         this.nombre = nombre;
         this.edad = edad;
         this.peso = peso;
@@ -20,6 +21,7 @@ public class Usuario {
         this.objetivo = objetivo;
         this.calorias = calorias;
         this.sexo = sexo;
+        this.documento = documento;
     }
 
     public String getNombre() { return nombre; }
@@ -29,6 +31,7 @@ public class Usuario {
     public String getObjetivo() { return objetivo; }
     public double getCalorias() { return calorias; }
     public String getSexo() { return sexo; }
+    public String getDocumento() { return documento; }
 
     public void setNombre(String nombre) { this.nombre = nombre; }
     public void setEdad(int edad) { this.edad = edad; }
@@ -37,4 +40,5 @@ public class Usuario {
     public void setObjetivo(String objetivo) { this.objetivo = objetivo; }
     public void setCalorias(double calorias) { this.calorias = calorias; }
     public void setSexo(String sexo) { this.sexo = sexo; }
+    public void setDocumento(String documento) { this.documento = documento; }
 }
