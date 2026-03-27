@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.proyecto.controller.GestionAbandonosController">
+    <!-- Estilo general -->
+    <stylesheets>
+        <URL value="@estilos.css" />
+    </stylesheets>
+
+    <!-- Título superior -->
+    <top>
+        <Label text="Gestión de Abandonos" styleClass="titulo-principal" BorderPane.alignment="CENTER" />
+    </top>
+
+    <!-- Contenido principal -->
+    <center>
+        <VBox spacing="10" alignment="CENTER" padding="10">
+            <!-- Formulario -->
+            <GridPane hgap="10" vgap="10">
+                <Label text="Nombre Usuario:" />
+                <TextField fx:id="txtNombre" GridPane.columnIndex="1" />
+
+                <Label text="Motivo:" GridPane.rowIndex="1" />
+                <TextField fx:id="txtMotivo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            </GridPane>
+
+            <!-- Botones -->
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Agregar" fx:id="btnAgregar" />
+                <Button text="Buscar" fx:id="btnBuscar" />
+            </HBox>
+
+            <!-- Tabla -->
+            <TableView fx:id="tablaAbandonos" prefHeight="200">
+                <columns>
+                    <TableColumn text="ID" fx:id="colId" />
+                    <TableColumn text="Nombre" fx:id="colNombre" />
+                    <TableColumn text="Fecha" fx:id="colFecha" />
+                    <TableColumn text="Motivo" fx:id="colMotivo" />
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+    <!-- Botón inferior -->
+    <bottom>
+        <HBox spacing="10" alignment="CENTER" padding="10">
+            <Button text="Eliminar" fx:id="btnEliminar" />
+            <Button text="Volver" fx:id="btnVolver" />
+        </HBox>
+    </bottom>
+</BorderPane>
