@@ -1,7 +1,7 @@
 package com.example.proyecto.controller;
 
 import com.example.proyecto.Main;
-import com.example.proyecto.model.CuentaUsuario;
+import com.example.proyecto.service.CuentaUsuario;
 import com.example.proyecto.service.CuentaService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

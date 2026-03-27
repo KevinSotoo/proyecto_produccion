@@ -1,4 +1,4 @@
-package com.example.proyecto.model;
+package com.example.proyecto.service;
 
 public class CuentaUsuario {
 

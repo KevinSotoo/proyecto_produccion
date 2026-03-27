@@ -1,6 +1,5 @@
 package com.example.proyecto.service;
 
-import com.example.proyecto.model.CuentaUsuario;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
