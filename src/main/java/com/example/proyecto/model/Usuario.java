@@ -10,6 +10,7 @@ public class Usuario {
     private double calorias;
     private String sexo;
     private String documento;
+    private boolean abandonado;
 
     public Usuario() {}
 
@@ -22,6 +23,7 @@ public class Usuario {
         this.calorias = calorias;
         this.sexo = sexo;
         this.documento = documento;
+        this.abandonado = false;
     }
 
     public String getNombre() { return nombre; }
@@ -32,6 +34,7 @@ public class Usuario {
     public double getCalorias() { return calorias; }
     public String getSexo() { return sexo; }
     public String getDocumento() { return documento; }
+    public boolean isAbandonado() { return abandonado; }
 
     public void setNombre(String nombre) { this.nombre = nombre; }
     public void setEdad(int edad) { this.edad = edad; }
@@ -41,4 +44,5 @@ public class Usuario {
     public void setCalorias(double calorias) { this.calorias = calorias; }
     public void setSexo(String sexo) { this.sexo = sexo; }
     public void setDocumento(String documento) { this.documento = documento; }
+    public void setAbandonado(boolean abandonado) { this.abandonado = abandonado; }
 }

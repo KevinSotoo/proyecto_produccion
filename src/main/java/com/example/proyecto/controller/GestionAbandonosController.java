@@ -1,12 +1,17 @@
 package com.example.proyecto.controller;
 
+import com.example.proyecto.Main;
 import com.example.proyecto.model.Abandono;
+import com.example.proyecto.service.AbandonoService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 public class GestionAbandonosController {
@@ -33,6 +38,7 @@ public class GestionAbandonosController {
     private Button btnAgregar, btnBuscar, btnEliminar, btnVolver;
 
     private ObservableList<Abandono> listaAbandonos = FXCollections.observableArrayList();
+    private final AbandonoService abandonoService = new AbandonoService();
 
     @FXML
     public void initialize() {
@@ -44,11 +50,22 @@ public class GestionAbandonosController {
 
         tablaAbandonos.setItems(listaAbandonos);
 
+        // Cargar datos de abandonos
+        cargarAbandonos();
+
         // Eventos de botones
         btnAgregar.setOnAction(event -> agregarAbandono());
         btnEliminar.setOnAction(event -> eliminarAbandono());
         btnBuscar.setOnAction(event -> buscarAbandono());
-        btnVolver.setOnAction(event -> volver());
+    }
+
+    private void cargarAbandonos() {
+        try {
+            listaAbandonos.clear();
+            listaAbandonos.addAll(abandonoService.cargar());
+        } catch (IOException e) {
+            mostrarAlerta("Error", "Error al cargar abandonos: " + e.getMessage());
+        }
     }
 
     private void agregarAbandono() {
@@ -60,12 +77,15 @@ public class GestionAbandonosController {
             return;
         }
 
-        int id = listaAbandonos.size() + 1;
-        Abandono abandono = new Abandono(id, nombre, LocalDate.now(), motivo);
-        listaAbandonos.add(abandono);
-
-        txtNombre.clear();
-        txtMotivo.clear();
+        try {
+            abandonoService.agregarAbandono(nombre, motivo);
+            cargarAbandonos();
+            txtNombre.clear();
+            txtMotivo.clear();
+            mostrarAlerta("Éxito", "Abandono registrado correctamente.");
+        } catch (IOException e) {
+            mostrarAlerta("Error", "Error al guardar abandono: " + e.getMessage());
+        }
     }
 
     private void eliminarAbandono() {
@@ -75,13 +95,23 @@ public class GestionAbandonosController {
             return;
         }
 
-        listaAbandonos.remove(seleccionado);
+        try {
+            listaAbandonos.remove(seleccionado);
+            abandonoService.guardar(listaAbandonos);
+            mostrarAlerta("Éxito", "Abandono eliminado correctamente.");
+        } catch (IOException e) {
+            mostrarAlerta("Error", "Error al eliminar abandono: " + e.getMessage());
+        }
     }
 
     private void buscarAbandono() {
         String nombre = txtNombre.getText().toLowerCase();
-        ObservableList<Abandono> resultados = FXCollections.observableArrayList();
+        if (nombre.isEmpty()) {
+            cargarAbandonos();
+            return;
+        }
 
+        ObservableList<Abandono> resultados = FXCollections.observableArrayList();
         for (Abandono abandono : listaAbandonos) {
             if (abandono.getNombreUsuario().toLowerCase().contains(nombre)) {
                 resultados.add(abandono);
@@ -91,13 +121,24 @@ public class GestionAbandonosController {
         tablaAbandonos.setItems(resultados);
     }
 
+    @FXML
     private void volver() {
-        // Lógica para volver a la ventana principal
-        // Ejemplo: cargar otro FXML
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    Main.class.getResource("/com/example/proyecto/GestionUsuarios.fxml")
+            );
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) tablaAbandonos.getScene().getWindow();
+            stage.setMaximized(false);
+            stage.setScene(scene);
+            stage.setMaximized(true);
+        } catch (IOException e) {
+            mostrarAlerta("Error", "Error al volver: " + e.getMessage());
+        }
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {
-        Alert alerta = new Alert(Alert.AlertType.ERROR);
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
         alerta.setTitle(titulo);
         alerta.setContentText(mensaje);
         alerta.showAndWait();

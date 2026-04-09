@@ -33,6 +33,7 @@
               style="-fx-background-color: #1F3F6D;">
             <padding><Insets top="25" left="15" right="15"/></padding>
             <Button text="Mi Perfil" maxWidth="Infinity"
+                    onAction="#mostrarPerfil"
                     style="-fx-background-color: #2C5FA8; -fx-text-fill: white;
                            -fx-font-weight: bold; -fx-background-radius: 10;"/>
             <Button text="Salir" maxWidth="Infinity"
@@ -44,79 +45,106 @@
 
     <!-- CENTRO -->
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
-            <content>
-                <VBox spacing="25">
-                    <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
+        <StackPane fx:id="contenidoStack">
+            <!-- Vista 1: Perfil -->
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+                <content>
+                    <VBox spacing="25">
+                        <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
 
-                    <Label text="Mi Perfil"
-                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                        <Label text="Mi Perfil"
+                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
 
-                    <!-- TABLA -->
-                    <TableView fx:id="usuarioTable" prefHeight="120"
-                               style="-fx-background-radius: 15; -fx-border-radius: 15;
-                                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8,0,0,2);">
-                        <columns>
-                            <TableColumn fx:id="documentoColumn" text="Documento" prefWidth="100"/>
-                            <TableColumn fx:id="nombreColumn"    text="Nombre"    prefWidth="110"/>
-                            <TableColumn fx:id="edadColumn"      text="Edad"      prefWidth="55"/>
-                            <TableColumn fx:id="pesoColumn"      text="Peso"      prefWidth="65"/>
-                            <TableColumn fx:id="alturaColumn"    text="Altura"    prefWidth="65"/>
-                            <TableColumn fx:id="objetivoColumn"  text="Objetivo"  prefWidth="140"/>
-                            <TableColumn fx:id="caloriasColumn"  text="Calorías"  prefWidth="85"/>
-                            <TableColumn fx:id="sexoColumn"      text="Sexo"      prefWidth="80"/>
-                        </columns>
-                    </TableView>
+                        <!-- TABLA -->
+                        <TableView fx:id="usuarioTable" prefHeight="120"
+                                   style="-fx-background-radius: 15; -fx-border-radius: 15;
+                                          -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8,0,0,2);">
+                            <columns>
+                                <TableColumn fx:id="documentoColumn" text="Documento" prefWidth="100"/>
+                                <TableColumn fx:id="nombreColumn"    text="Nombre"    prefWidth="110"/>
+                                <TableColumn fx:id="edadColumn"      text="Edad"      prefWidth="55"/>
+                                <TableColumn fx:id="pesoColumn"      text="Peso"      prefWidth="65"/>
+                                <TableColumn fx:id="alturaColumn"    text="Altura"    prefWidth="65"/>
+                                <TableColumn fx:id="objetivoColumn"  text="Objetivo"  prefWidth="140"/>
+                                <TableColumn fx:id="caloriasColumn"  text="Calorías"  prefWidth="85"/>
+                                <TableColumn fx:id="sexoColumn"      text="Sexo"      prefWidth="80"/>
+                            </columns>
+                        </TableView>
 
-                    <Separator/>
+                        <Separator/>
 
-                    <Label text="Editar mis datos"
-                           style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                        <HBox spacing="30" alignment="TOP_LEFT">
+                            <!-- Sección izquierda: Editar datos -->
+                            <VBox spacing="15" HBox.hgrow="ALWAYS">
+                                <Label text="Editar mis datos"
+                                       style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
 
-                    <!-- FORMULARIO -->
-                    <GridPane hgap="20" vgap="18">
+                                <GridPane hgap="20" vgap="18">
+                                    <Label text="Peso (kg):"
+                                           style="-fx-text-fill: #2C3E50; -fx-font-weight: bold; -fx-font-size: 13px;"
+                                           GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                    <TextField fx:id="pesoField" promptText="Ej: 70.5"
+                                               style="-fx-background-radius: 10;"
+                                               GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                        <Label text="Peso (kg):"
-                               style="-fx-text-fill: #2C3E50; -fx-font-weight: bold; -fx-font-size: 13px;"
-                               GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                        <TextField fx:id="pesoField" promptText="Ej: 70.5"
-                                   style="-fx-background-radius: 10;"
-                                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                                    <Label text="Altura (cm):"
+                                           style="-fx-text-fill: #2C3E50; -fx-font-weight: bold; -fx-font-size: 13px;"
+                                           GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                    <TextField fx:id="alturaField" promptText="Ej: 175"
+                                               style="-fx-background-radius: 10;"
+                                               GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                        <Label text="Altura (cm):"
-                               style="-fx-text-fill: #2C3E50; -fx-font-weight: bold; -fx-font-size: 13px;"
-                               GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                        <TextField fx:id="alturaField" promptText="Ej: 175"
-                                   style="-fx-background-radius: 10;"
-                                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                    <Label text="Nivel de Actividad:"
+                                           style="-fx-text-fill: #2C3E50; -fx-font-weight: bold; -fx-font-size: 13px;"
+                                           GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                    <ComboBox fx:id="actividadBox" promptText="Selecciona..."
+                                              style="-fx-background-radius: 10;"
+                                              GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                        <Label text="Nivel de Actividad:"
-                               style="-fx-text-fill: #2C3E50; -fx-font-weight: bold; -fx-font-size: 13px;"
-                               GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                        <ComboBox fx:id="actividadBox" promptText="Selecciona..."
-                                  style="-fx-background-radius: 10;"
-                                  GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                                    <Label text="Objetivo:"
+                                           style="-fx-text-fill: #2C3E50; -fx-font-weight: bold; -fx-font-size: 13px;"
+                                           GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                                    <ComboBox fx:id="objetivoComboBox" promptText="Selecciona..."
+                                              style="-fx-background-radius: 10;"
+                                              GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                                </GridPane>
 
-                        <Label text="Objetivo:"
-                               style="-fx-text-fill: #2C3E50; -fx-font-weight: bold; -fx-font-size: 13px;"
-                               GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                        <ComboBox fx:id="objetivoComboBox" promptText="Selecciona..."
-                                  style="-fx-background-radius: 10;"
-                                  GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                                <Button text="Guardar Cambios"
+                                        onAction="#guardarCambios"
+                                        style="-fx-background-color: #2ECC71; -fx-text-fill: white;
+                                               -fx-font-weight: bold; -fx-background-radius: 20;"/>
+                            </VBox>
 
-                    </GridPane>
+                            <Separator orientation="VERTICAL"/>
 
-                    <!-- BOTONES -->
-                    <HBox spacing="15">
-                        <Button text="Guardar Cambios"
-                                onAction="#guardarCambios"
-                                style="-fx-background-color: #2ECC71; -fx-text-fill: white;
-                                       -fx-font-weight: bold; -fx-background-radius: 20;"/>
-                    </HBox>
+                            <!-- Sección derecha: Cancelar Suscripción -->
+                            <VBox spacing="15" prefWidth="300">
+                                <Label text="Cancelar Suscripción"
+                                       style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #E74C3C;"/>
 
-                </VBox>
-            </content>
-        </ScrollPane>
+                                <Label text="Si deseas cancelar tu suscripción, completa el formulario a continuación:"
+                                       style="-fx-text-fill: #7F8C8D; -fx-font-size: 12px; -fx-wrap-text: true;"/>
+
+                                <Label text="Motivo de cancela (opcional):"
+                                       style="-fx-text-fill: #2C3E50; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                                <TextArea fx:id="motivoCancelacionField"
+                                         promptText="Cuéntanos por qué decides cancelar..."
+                                         wrapText="true"
+                                         prefRowCount="5"
+                                         style="-fx-background-radius: 10;"/>
+
+                                <Button text="Confirmar Cancelación"
+                                        onAction="#cancelarSuscripcion"
+                                        style="-fx-background-color: #E74C3C; -fx-text-fill: white;
+                                               -fx-font-weight: bold; -fx-background-radius: 20; -fx-font-size: 14px;"/>
+                            </VBox>
+                        </HBox>
+
+                    </VBox>
+                </content>
+            </ScrollPane>
+        </StackPane>
     </center>
 
 </BorderPane>
+

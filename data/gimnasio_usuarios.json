@@ -6,7 +6,8 @@
   "objetivo" : "Ganar masa muscular",
   "calorias" : 2754.0,
   "sexo" : "Masculino",
-  "documento" : "1025528936"
+  "documento" : "1025528936",
+  "abandonado" : true
 }, {
   "nombre" : "Daniel",
   "edad" : 22,
@@ -15,7 +16,8 @@
   "objetivo" : "Ganar masa muscular",
   "calorias" : 2404.0,
   "sexo" : "Masculino",
-  "documento" : "1938475620"
+  "documento" : "1938475620",
+  "abandonado" : false
 }, {
   "nombre" : "Sebastian",
   "edad" : 19,
@@ -24,7 +26,8 @@
   "objetivo" : "Ganar masa muscular",
   "calorias" : 1917.0,
   "sexo" : "Masculino",
-  "documento" : "5673829104"
+  "documento" : "5673829104",
+  "abandonado" : false
 }, {
   "nombre" : "Nicolas",
   "edad" : 21,
@@ -33,7 +36,8 @@
   "objetivo" : "Ganar masa muscular",
   "calorias" : 2776.0,
   "sexo" : "Masculino",
-  "documento" : "9081726354"
+  "documento" : "9081726354",
+  "abandonado" : false
 }, {
   "nombre" : "Andres",
   "edad" : 23,
@@ -42,7 +46,8 @@
   "objetivo" : "Perder grasa",
   "calorias" : 2541.0,
   "sexo" : "Masculino",
-  "documento" : "3748291056"
+  "documento" : "3748291056",
+  "abandonado" : false
 }, {
   "nombre" : "Camila",
   "edad" : 22,
@@ -51,7 +56,8 @@
   "objetivo" : "Mantener peso",
   "calorias" : 1980.0,
   "sexo" : "Femenino",
-  "documento" : "6519203847"
+  "documento" : "6519203847",
+  "abandonado" : false
 }, {
   "nombre" : "Valeria",
   "edad" : 20,
@@ -60,7 +66,8 @@
   "objetivo" : "Ganar masa muscular",
   "calorias" : 2150.0,
   "sexo" : "Femenino",
-  "documento" : "2847561930"
+  "documento" : "2847561930",
+  "abandonado" : false
 }, {
   "nombre" : "Miguel",
   "edad" : 25,
@@ -69,7 +76,8 @@
   "objetivo" : "Mantener peso",
   "calorias" : 2620.0,
   "sexo" : "Masculino",
-  "documento" : "7192038456"
+  "documento" : "7192038456",
+  "abandonado" : false
 }, {
   "nombre" : "Laura",
   "edad" : 19,
@@ -78,7 +86,8 @@
   "objetivo" : "Perder grasa",
   "calorias" : 1750.0,
   "sexo" : "Femenino",
-  "documento" : "4829105736"
+  "documento" : "4829105736",
+  "abandonado" : false
 }, {
   "nombre" : "Santiago",
   "edad" : 24,
@@ -87,7 +96,8 @@
   "objetivo" : "Perder grasa",
   "calorias" : 2890.0,
   "sexo" : "Masculino",
-  "documento" : "9301758462"
+  "documento" : "9301758462",
+  "abandonado" : false
 }, {
   "nombre" : "Isabella",
   "edad" : 21,
@@ -96,7 +106,8 @@
   "objetivo" : "Mantener peso",
   "calorias" : 1870.0,
   "sexo" : "Femenino",
-  "documento" : "2758491036"
+  "documento" : "2758491036",
+  "abandonado" : false
 }, {
   "nombre" : "Juan",
   "edad" : 28,
@@ -105,7 +116,8 @@
   "objetivo" : "Ganar masa muscular",
   "calorias" : 3100.0,
   "sexo" : "Masculino",
-  "documento" : "8162039475"
+  "documento" : "8162039475",
+  "abandonado" : false
 }, {
   "nombre" : "Daniela",
   "edad" : 22,
@@ -114,7 +126,8 @@
   "objetivo" : "Perder grasa",
   "calorias" : 1920.0,
   "sexo" : "Femenino",
-  "documento" : "5039182746"
+  "documento" : "5039182746",
+  "abandonado" : false
 }, {
   "nombre" : "Carlos",
   "edad" : 30,
@@ -123,7 +136,8 @@
   "objetivo" : "Mantener peso",
   "calorias" : 2710.0,
   "sexo" : "Masculino",
-  "documento" : "6928471503"
+  "documento" : "6928471503",
+  "abandonado" : false
 }, {
   "nombre" : "Sofia",
   "edad" : 18,
@@ -132,7 +146,8 @@
   "objetivo" : "Ganar masa muscular",
   "calorias" : 2040.0,
   "sexo" : "Femenino",
-  "documento" : "1475938206"
+  "documento" : "1475938206",
+  "abandonado" : false
 }, {
   "nombre" : "Mateo",
   "edad" : 26,
@@ -141,7 +156,8 @@
   "objetivo" : "Mantener peso",
   "calorias" : 2560.0,
   "sexo" : "Masculino",
-  "documento" : "8745201936"
+  "documento" : "8745201936",
+  "abandonado" : false
 }, {
   "nombre" : "Alejandra",
   "edad" : 23,
@@ -150,7 +166,8 @@
   "objetivo" : "Perder grasa",
   "calorias" : 1830.0,
   "sexo" : "Femenino",
-  "documento" : "3910284756"
+  "documento" : "3910284756",
+  "abandonado" : false
 }, {
   "nombre" : "Natalia",
   "edad" : 20,
@@ -159,7 +176,8 @@
   "objetivo" : "Mantener peso",
   "calorias" : 1790.0,
   "sexo" : "Femenino",
-  "documento" : "6283749105"
+  "documento" : "6283749105",
+  "abandonado" : false
 }, {
   "nombre" : "Manuel",
   "edad" : 30,
@@ -168,7 +186,8 @@
   "objetivo" : "Perder grasa",
   "calorias" : 1661.0,
   "sexo" : "Masculino",
-  "documento" : "9502847613"
+  "documento" : "9502847613",
+  "abandonado" : false
 }, {
   "nombre" : "Ana",
   "edad" : 22,
@@ -177,7 +196,8 @@
   "objetivo" : "Ganar masa muscular",
   "calorias" : 2186.0,
   "sexo" : "Femenino",
-  "documento" : "2047591836"
+  "documento" : "2047591836",
+  "abandonado" : false
 }, {
   "nombre" : "Luis",
   "edad" : 20,
@@ -186,5 +206,6 @@
   "objetivo" : "Ganar masa muscular",
   "calorias" : 3211.0,
   "sexo" : "Masculino",
-  "documento" : "7639182504"
+  "documento" : "7639182504",
+  "abandonado" : false
 } ]

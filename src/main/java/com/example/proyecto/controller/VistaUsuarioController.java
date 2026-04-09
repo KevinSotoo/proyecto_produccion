@@ -2,6 +2,7 @@ package com.example.proyecto.controller;
 
 import com.example.proyecto.Main;
 import com.example.proyecto.model.Usuario;
+import com.example.proyecto.service.AbandonoService;
 import com.example.proyecto.service.UsuarioService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,10 +30,12 @@ public class VistaUsuarioController {
     @FXML private ComboBox<String> actividadBox;
     @FXML private ComboBox<String> objetivoComboBox;
     @FXML private Label bienvenidaLabel;
+    @FXML private TextArea motivoCancelacionField;
 
     private String documentoActual;
     private Usuario usuarioActual;
     private final UsuarioService service = new UsuarioService();
+    private final AbandonoService abandonoService = new AbandonoService();
 
     @FXML
     public void initialize() {
@@ -135,6 +138,62 @@ public class VistaUsuarioController {
     }
 
     @FXML
+    private void cancelarSuscripcion() {
+        if (usuarioActual == null) {
+            mostrarAlerta("No se encontró tu perfil.");
+            return;
+        }
+
+        // Confirmación
+        Alert confirmar = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmar.setTitle("Cancelar Suscripción");
+        confirmar.setHeaderText("¿Está seguro?");
+        confirmar.setContentText("¿Desea cancelar su suscripción? Esta acción no se puede deshacer.");
+        
+        if (confirmar.showAndWait().orElse(null) != ButtonType.OK) {
+            return;
+        }
+
+        try {
+            String motivo = motivoCancelacionField.getText().trim();
+            if (motivo.isEmpty()) {
+                motivo = "No especificado";
+            }
+
+            // Marcar usuario como abandonado
+            usuarioActual.setAbandonado(true);
+
+            // Guardar cambios en usuarios
+            List<Usuario> todos = service.cargar();
+            for (int i = 0; i < todos.size(); i++) {
+                if (documentoActual.equals(todos.get(i).getDocumento())) {
+                    todos.set(i, usuarioActual);
+                    break;
+                }
+            }
+            service.guardar(todos);
+
+            // Registrar abandono
+            abandonoService.agregarAbandono(usuarioActual.getNombre(), motivo);
+
+            mostrarExito("Suscripción cancelada. Gracias por usar nuestros servicios.");
+            
+            // Regresar al login después de 2 segundos
+            Thread.sleep(1500);
+            salir();
+
+        } catch (Exception e) {
+            mostrarAlerta("Error al cancelar suscripción: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void mostrarPerfil() {
+        // Este método se llama cuando se selecciona "Mi Perfil"
+        // En una arquitectura más compleja, aquí cambiarías vistas usando StackPane
+    }
+
+    @FXML
     private void salir() {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -148,6 +207,7 @@ public class VistaUsuarioController {
             mostrarAlerta("Error al cerrar sesión: " + e.getMessage());
         }
     }
+
 
     private void mostrarAlerta(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -165,3 +225,4 @@ public class VistaUsuarioController {
         alert.showAndWait();
     }
 }
+
