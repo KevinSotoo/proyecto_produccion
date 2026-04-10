@@ -2,6 +2,7 @@ package com.example.proyecto.model;
 
 public class Usuario {
 
+    private int id;
     private String nombre;
     private int edad;
     private double peso;
@@ -11,6 +12,7 @@ public class Usuario {
     private String sexo;
     private String documento;
     private boolean abandonado;
+    private String tipoMembresia;
 
     public Usuario() {}
 
@@ -24,8 +26,25 @@ public class Usuario {
         this.sexo = sexo;
         this.documento = documento;
         this.abandonado = false;
+        this.tipoMembresia = "Básica";
     }
 
+    public Usuario(int id, String nombre, int edad, double peso, double altura, String objetivo,
+                   double calorias, String sexo, String documento, boolean abandonado, String tipoMembresia) {
+        this.id = id;
+        this.nombre = nombre;
+        this.edad = edad;
+        this.peso = peso;
+        this.altura = altura;
+        this.objetivo = objetivo;
+        this.calorias = calorias;
+        this.sexo = sexo;
+        this.documento = documento;
+        this.abandonado = abandonado;
+        this.tipoMembresia = tipoMembresia;
+    }
+
+    public int getId() { return id; }
     public String getNombre() { return nombre; }
     public int getEdad() { return edad; }
     public double getPeso() { return peso; }
@@ -35,7 +54,9 @@ public class Usuario {
     public String getSexo() { return sexo; }
     public String getDocumento() { return documento; }
     public boolean isAbandonado() { return abandonado; }
+    public String getTipoMembresia() { return tipoMembresia; }
 
+    public void setId(int id) { this.id = id; }
     public void setNombre(String nombre) { this.nombre = nombre; }
     public void setEdad(int edad) { this.edad = edad; }
     public void setPeso(double peso) { this.peso = peso; }
@@ -45,4 +66,5 @@ public class Usuario {
     public void setSexo(String sexo) { this.sexo = sexo; }
     public void setDocumento(String documento) { this.documento = documento; }
     public void setAbandonado(boolean abandonado) { this.abandonado = abandonado; }
+    public void setTipoMembresia(String tipoMembresia) { this.tipoMembresia = tipoMembresia; }
 }
