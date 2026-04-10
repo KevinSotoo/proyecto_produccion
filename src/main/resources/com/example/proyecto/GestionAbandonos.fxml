@@ -2,13 +2,8 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.proyecto.controller.GestionAbandonosController">
-    <!-- Estilo general -->
-    <stylesheets>
-        <URL value="@estilos.css" />
-    </stylesheets>
 
     <!-- Título superior -->
     <top>

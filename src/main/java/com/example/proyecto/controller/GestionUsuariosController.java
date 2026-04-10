@@ -1,16 +1,22 @@
 package com.example.proyecto.controller;
 
 import com.example.proyecto.Main;
+import com.example.proyecto.model.Abandono;
 import com.example.proyecto.model.Usuario;
+import com.example.proyecto.service.AbandonoService;
 import com.example.proyecto.service.UsuarioService;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 public class GestionUsuariosController {
@@ -31,14 +37,25 @@ public class GestionUsuariosController {
     @FXML private TableColumn<Usuario, Double> caloriasColumn;
     @FXML private TableColumn<Usuario, String> sexoColumn;
     @FXML private TableColumn<Usuario, String> documentoColumn;
+    @FXML private TableColumn<Usuario, Boolean> abandonadoColumn;
     @FXML private ComboBox<String> sexoComboBox;
     @FXML private ComboBox<String> objetivoComboBox;
     @FXML private TextField nombreField;
     @FXML private TextField pesoField;
     @FXML private TextField alturaField;
     @FXML private TextField documentoField;
+    @FXML private StackPane contenidoStack;
+
+    // Elementos para vista de abandonos
+    @FXML private TableView<Abandono> tablaAbandonos;
+    @FXML private TableColumn<Abandono, Integer> colId;
+    @FXML private TableColumn<Abandono, String> colNombreAbandono;
+    @FXML private TableColumn<Abandono, LocalDate> colFecha;
+    @FXML private TableColumn<Abandono, String> colMotivo;
 
     private final UsuarioService service = new UsuarioService();
+    private final AbandonoService abandonoService = new AbandonoService();
+    private final ObservableList<Abandono> listaAbandonos = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
@@ -50,6 +67,17 @@ public class GestionUsuariosController {
         caloriasColumn.setCellValueFactory(new PropertyValueFactory<>("calorias"));
         sexoColumn.setCellValueFactory(new PropertyValueFactory<>("sexo"));
         documentoColumn.setCellValueFactory(new PropertyValueFactory<>("documento"));
+        abandonadoColumn.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().isAbandonado())
+        );
+
+        // Configurar columnas de abandonos
+        colId.setCellValueFactory(data -> data.getValue().idProperty().asObject());
+        colNombreAbandono.setCellValueFactory(data -> data.getValue().nombreUsuarioProperty());
+        colFecha.setCellValueFactory(data -> data.getValue().fechaAbandonoProperty());
+        colMotivo.setCellValueFactory(data -> data.getValue().motivoProperty());
+
+        tablaAbandonos.setItems(listaAbandonos);
 
         actividadBox.getItems().addAll(
                 "Sedentario", "Ligero", "Moderado", "Intenso", "Muy intenso"
@@ -91,6 +119,46 @@ public class GestionUsuariosController {
         sexoComboBox.setValue(u.getSexo());
         objetivoComboBox.setValue(u.getObjetivo());
         documentoField.setText(u.getDocumento() != null ? u.getDocumento() : "");
+    }
+
+    @FXML
+    private void mostrarUsuarios() {
+        if (!contenidoStack.getChildren().isEmpty()) {
+            contenidoStack.getChildren().get(0).toFront();
+        }
+    }
+
+    @FXML
+    private void mostrarAbandonos() {
+        cargarAbandonos();
+        if (!contenidoStack.getChildren().isEmpty() && contenidoStack.getChildren().size() > 1) {
+            contenidoStack.getChildren().get(1).toFront();
+        }
+    }
+
+    private void cargarAbandonos() {
+        try {
+            listaAbandonos.clear();
+            listaAbandonos.addAll(abandonoService.cargar());
+        } catch (IOException e) {
+            mostrarAlerta("Error al cargar abandonos: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void eliminarAbandono() {
+        Abandono seleccionado = tablaAbandonos.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            mostrarAlerta("Selecciona un registro para eliminar.");
+            return;
+        }
+
+        try {
+            listaAbandonos.remove(seleccionado);
+            abandonoService.guardar(listaAbandonos);
+        } catch (IOException e) {
+            mostrarAlerta("Error al eliminar abandono: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -229,3 +297,4 @@ public class GestionUsuariosController {
         objetivoComboBox.setValue(null);
     }
 }
+
