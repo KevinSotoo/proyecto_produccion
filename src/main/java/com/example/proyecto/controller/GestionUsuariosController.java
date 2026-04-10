@@ -28,6 +28,7 @@ public class GestionUsuariosController {
     @FXML private Button btnEstadisticas;
     @FXML private TableView<Usuario> usuariosTable;
     @FXML private ComboBox<String> actividadBox;
+    @FXML private ComboBox<String> tipoMembresiaBox;
     @FXML private TextField edadField;
     @FXML private TableColumn<Usuario, String> nombreColumn;
     @FXML private TableColumn<Usuario, Integer> edadColumn;
@@ -37,6 +38,7 @@ public class GestionUsuariosController {
     @FXML private TableColumn<Usuario, Double> caloriasColumn;
     @FXML private TableColumn<Usuario, String> sexoColumn;
     @FXML private TableColumn<Usuario, String> documentoColumn;
+    @FXML private TableColumn<Usuario, String> tipoMembresiaColumn;
     @FXML private TableColumn<Usuario, Boolean> abandonadoColumn;
     @FXML private ComboBox<String> sexoComboBox;
     @FXML private ComboBox<String> objetivoComboBox;
@@ -67,6 +69,7 @@ public class GestionUsuariosController {
         caloriasColumn.setCellValueFactory(new PropertyValueFactory<>("calorias"));
         sexoColumn.setCellValueFactory(new PropertyValueFactory<>("sexo"));
         documentoColumn.setCellValueFactory(new PropertyValueFactory<>("documento"));
+        tipoMembresiaColumn.setCellValueFactory(new PropertyValueFactory<>("tipoMembresia"));
         abandonadoColumn.setCellValueFactory(cellData ->
             new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().isAbandonado())
         );
@@ -85,6 +88,9 @@ public class GestionUsuariosController {
         sexoComboBox.getItems().addAll("Masculino", "Femenino");
         objetivoComboBox.getItems().addAll(
                 "Perder grasa", "Ganar masa muscular", "Mantener peso"
+        );
+        tipoMembresiaBox.getItems().addAll(
+                "Básica", "Estándar", "Premium", "VIP"
         );
 
         usuariosTable.getSelectionModel().selectedItemProperty().addListener(
@@ -118,6 +124,7 @@ public class GestionUsuariosController {
         alturaField.setText(String.valueOf(u.getAltura()));
         sexoComboBox.setValue(u.getSexo());
         objetivoComboBox.setValue(u.getObjetivo());
+        tipoMembresiaBox.setValue(u.getTipoMembresia());
         documentoField.setText(u.getDocumento() != null ? u.getDocumento() : "");
     }
 
@@ -172,6 +179,7 @@ public class GestionUsuariosController {
             String objetivo = objetivoComboBox.getValue();
             String sexo = sexoComboBox.getValue();
             String documento = documentoField.getText().trim();
+            String tipoMembresia = tipoMembresiaBox.getValue();
 
             if (documento.isEmpty()) {
                 mostrarAlerta("El número de documento es obligatorio.");
@@ -181,6 +189,7 @@ public class GestionUsuariosController {
             double calorias = service.calcularCalorias(peso, altura, edad, sexo, actividad, objetivo);
 
             Usuario usuario = new Usuario(nombre, edad, peso, altura, objetivo, calorias, sexo, documento);
+            usuario.setTipoMembresia(tipoMembresia != null ? tipoMembresia : "Básica");
             usuariosTable.getItems().add(usuario);
             guardarDatos();
             limpiarCampos();
@@ -205,6 +214,7 @@ public class GestionUsuariosController {
             seleccionado.setObjetivo(objetivoComboBox.getValue());
             seleccionado.setSexo(sexoComboBox.getValue());
             seleccionado.setDocumento(documentoField.getText().trim());
+            seleccionado.setTipoMembresia(tipoMembresiaBox.getValue());
             usuariosTable.refresh();
             guardarDatos();
             limpiarCampos();
@@ -295,6 +305,7 @@ public class GestionUsuariosController {
         actividadBox.setValue(null);
         sexoComboBox.setValue(null);
         objetivoComboBox.setValue(null);
+        tipoMembresiaBox.setValue(null);
     }
 }
 

@@ -1,1 +1,7 @@
-[]
+[ {
+  "id" : 1,
+  "nombreUsuario" : "Kevin",
+  "fechaAbandono" : "2024-03-15",
+  "motivo" : "Falta de tiempo disponible para asistir al gimnasio"
+} ]
+
