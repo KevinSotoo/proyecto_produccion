@@ -155,6 +155,24 @@ public class AbandonoService {
             }
         }
     }
+
+    /**
+     * Guarda un único abandono
+     */
+    public void guardar(Abandono abandono) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "INSERT INTO abandonos (usuario_id, fecha_abandono, motivo) VALUES (?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, abandono.getUsuarioId());
+                stmt.setDate(2, Date.valueOf(abandono.getFechaAbandono()));
+                stmt.setString(3, abandono.getMotivo());
+                stmt.executeUpdate();
+                System.out.println("✓ Abandono guardado correctamente");
+            }
+        } catch (SQLException e) {
+            System.err.println("✗ Error al guardar abandono: " + e.getMessage());
+        }
+    }
 }
 
 

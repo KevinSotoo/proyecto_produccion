@@ -174,4 +174,48 @@ public class UsuarioService {
                 .filter(u -> u.getSexo() != null)
                 .collect(Collectors.groupingBy(Usuario::getSexo));
     }
+
+    /**
+     * Obtiene el ID de un usuario por su nombre
+     */
+    public int obtenerIdPorNombre(String nombre) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "SELECT id FROM usuarios WHERE nombre = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, nombre);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt("id");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("✗ Error al obtener ID del usuario: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    /**
+     * Guarda un único usuario
+     */
+    public void guardar(Usuario usuario) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "INSERT INTO usuarios (documento, nombre, edad, sexo, peso, altura, objetivo, calorias, tipo_membresia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                stmt.setString(1, usuario.getDocumento());
+                stmt.setString(2, usuario.getNombre());
+                stmt.setInt(3, usuario.getEdad());
+                stmt.setString(4, usuario.getSexo());
+                stmt.setDouble(5, usuario.getPeso());
+                stmt.setDouble(6, usuario.getAltura());
+                stmt.setString(7, usuario.getObjetivo());
+                stmt.setDouble(8, usuario.getCalorias());
+                stmt.setString(9, usuario.getTipoMembresia());
+                stmt.executeUpdate();
+                System.out.println("✓ Usuario " + usuario.getNombre() + " guardado correctamente");
+            }
+        } catch (SQLException e) {
+            System.err.println("✗ Error al guardar usuario: " + e.getMessage());
+        }
+    }
 }

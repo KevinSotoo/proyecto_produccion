@@ -1,10 +1,14 @@
 package com.example.proyecto.service;
 
+import com.example.proyecto.util.DatabaseConnection;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,5 +45,25 @@ public class CuentaService {
         List<CuentaUsuario> cuentas = cargarCuentas();
         cuentas.add(cuenta);
         guardarCuentas(cuentas);
+    }
+
+    /**
+     * Guarda una cuenta en la base de datos (sin usuario_id, será admin)
+     */
+    public void guardarCuenta(String username, String password, String rol) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "INSERT INTO cuentas (username, password, rol, email, estado) VALUES (?, ?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, username);
+                stmt.setString(2, password);
+                stmt.setString(3, rol);
+                stmt.setString(4, username + "@gym.local"); // Email por defecto
+                stmt.setString(5, "activa");
+                stmt.executeUpdate();
+                System.out.println("✓ Cuenta " + username + " guardada correctamente");
+            }
+        } catch (SQLException e) {
+            System.err.println("✗ Error al guardar cuenta: " + e.getMessage());
+        }
     }
 }

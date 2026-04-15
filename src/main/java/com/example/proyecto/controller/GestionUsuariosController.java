@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -54,6 +55,8 @@ public class GestionUsuariosController {
     @FXML private TableColumn<Abandono, String> colNombreAbandono;
     @FXML private TableColumn<Abandono, LocalDate> colFecha;
     @FXML private TableColumn<Abandono, String> colMotivo;
+    @FXML private BorderPane usuariosPane;
+    @FXML private BorderPane abandonosPane;
 
     private final UsuarioService service = new UsuarioService();
     private final AbandonoService abandonoService = new AbandonoService();
@@ -96,6 +99,14 @@ public class GestionUsuariosController {
         usuariosTable.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldVal, newVal) -> { if (newVal != null) cargarEnFormulario(newVal); }
         );
+
+        // Inicializar la vista de usuarios por defecto
+        if (usuariosPane != null && abandonosPane != null) {
+            usuariosPane.setVisible(true);
+            usuariosPane.setManaged(true);
+            abandonosPane.setVisible(false);
+            abandonosPane.setManaged(false);
+        }
     }
 
     public void setDocumentoActual(String documento) {
@@ -130,16 +141,25 @@ public class GestionUsuariosController {
 
     @FXML
     private void mostrarUsuarios() {
-        if (!contenidoStack.getChildren().isEmpty()) {
-            contenidoStack.getChildren().get(0).toFront();
+        cargarDatos();
+        if (usuariosPane != null && abandonosPane != null) {
+            usuariosPane.setVisible(true);
+            usuariosPane.setManaged(true);
+            usuariosPane.toFront();
+            abandonosPane.setVisible(false);
+            abandonosPane.setManaged(false);
         }
     }
 
     @FXML
     private void mostrarAbandonos() {
         cargarAbandonos();
-        if (!contenidoStack.getChildren().isEmpty() && contenidoStack.getChildren().size() > 1) {
-            contenidoStack.getChildren().get(1).toFront();
+        if (usuariosPane != null && abandonosPane != null) {
+            abandonosPane.setVisible(true);
+            abandonosPane.setManaged(true);
+            abandonosPane.toFront();
+            usuariosPane.setVisible(false);
+            usuariosPane.setManaged(false);
         }
     }
 
@@ -275,6 +295,7 @@ public class GestionUsuariosController {
 
     private void cargarDatos() {
         try {
+            usuariosTable.getItems().clear();
             List<Usuario> usuarios = service.cargar();
             if (rolActual.equals("usuario") && documentoActual != null) {
                 usuarios.stream()

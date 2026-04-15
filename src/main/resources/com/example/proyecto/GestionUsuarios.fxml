@@ -50,7 +50,7 @@
     <center>
         <StackPane fx:id="contenidoStack">
             <!-- VISTA 1: USUARIOS -->
-            <BorderPane>
+            <BorderPane fx:id="usuariosPane">
                 <center>
                     <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
                         <content>
@@ -175,7 +175,7 @@
             </BorderPane>
 
             <!-- VISTA 2: ABANDONOS -->
-            <BorderPane>
+            <BorderPane fx:id="abandonosPane">
                 <center>
                     <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
                         <content>

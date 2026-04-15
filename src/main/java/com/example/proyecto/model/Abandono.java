@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 public class Abandono {
     private final IntegerProperty id;
+    private final IntegerProperty usuarioId;
     private final StringProperty nombreUsuario;
     private final ObjectProperty<LocalDate> fechaAbandono;
     private final StringProperty motivo;
@@ -14,6 +15,7 @@ public class Abandono {
     // Constructor sin argumentos para Jackson
     public Abandono() {
         this.id = new SimpleIntegerProperty(0);
+        this.usuarioId = new SimpleIntegerProperty(0);
         this.nombreUsuario = new SimpleStringProperty("");
         this.fechaAbandono = new SimpleObjectProperty<>(LocalDate.now());
         this.motivo = new SimpleStringProperty("");
@@ -21,7 +23,16 @@ public class Abandono {
 
     public Abandono(int id, String nombreUsuario, LocalDate fechaAbandono, String motivo) {
         this.id = new SimpleIntegerProperty(id);
+        this.usuarioId = new SimpleIntegerProperty(0);
         this.nombreUsuario = new SimpleStringProperty(nombreUsuario);
+        this.fechaAbandono = new SimpleObjectProperty<>(fechaAbandono);
+        this.motivo = new SimpleStringProperty(motivo);
+    }
+
+    public Abandono(int id, int usuarioId, LocalDate fechaAbandono, String motivo) {
+        this.id = new SimpleIntegerProperty(id);
+        this.usuarioId = new SimpleIntegerProperty(usuarioId);
+        this.nombreUsuario = new SimpleStringProperty("");
         this.fechaAbandono = new SimpleObjectProperty<>(fechaAbandono);
         this.motivo = new SimpleStringProperty(motivo);
     }
@@ -58,6 +69,7 @@ public class Abandono {
 
     // Getters
     public int getId() { return id.get(); }
+    public int getUsuarioId() { return usuarioId.get(); }
     public String getNombreUsuario() { return nombreUsuario.get(); }
     public LocalDate getFechaAbandono() { return fechaAbandono.get(); }
     public String getMotivo() { return motivo.get(); }
