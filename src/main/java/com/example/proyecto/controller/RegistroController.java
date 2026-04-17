@@ -3,6 +3,7 @@ package com.example.proyecto.controller;
 import com.example.proyecto.Main;
 import com.example.proyecto.service.CuentaUsuario;
 import com.example.proyecto.service.CuentaService;
+import com.example.proyecto.service.UsuarioService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,20 +18,23 @@ import java.util.List;
 public class RegistroController {
 
     @FXML private TextField usernameField;
+    @FXML private TextField documentoField;
     @FXML private PasswordField passwordField;
     @FXML private PasswordField confirmarPasswordField;
     @FXML private Label mensajeLabel;
 
     private final CuentaService cuentaService = new CuentaService();
+    private final UsuarioService usuarioService = new UsuarioService();
 
     @FXML
     private void registrar() {
         String username = usernameField.getText().trim();
+        String documento = documentoField.getText().trim();
         String password = passwordField.getText().trim();
         String confirmar = confirmarPasswordField.getText().trim();
 
         // Validaciones
-        if (username.isEmpty() || password.isEmpty() || confirmar.isEmpty()) {
+        if (username.isEmpty() || documento.isEmpty() || password.isEmpty() || confirmar.isEmpty()) {
             mostrarError("Por favor completa todos los campos.");
             return;
         }
@@ -45,6 +49,13 @@ public class RegistroController {
             return;
         }
 
+        // ✅ VALIDACIÓN NUEVA: Verificar que el documento existe como usuario
+        int usuarioId = usuarioService.obtenerIdPorDocumento(documento);
+        if (usuarioId <= 0) {
+            mostrarError("El documento no existe en el sistema. Por favor verifica el número de documento.");
+            return;
+        }
+
         // Verificar que el username no exista ya
         try {
             List<CuentaUsuario> cuentas = cuentaService.cargarCuentas();
@@ -56,9 +67,8 @@ public class RegistroController {
                 return;
             }
 
-            // Crear cuenta nueva
-            CuentaUsuario nueva = new CuentaUsuario(username, password, "usuario");
-            cuentaService.registrarCuenta(nueva);
+            // ✅ CAMBIO: Ahora crea la cuenta en BD con el usuario_id asociado
+            cuentaService.guardarCuentaConUsuario(username, password, documento);
 
             mostrarExito("¡Cuenta creada exitosamente! Ya puedes iniciar sesión.");
             limpiarCampos();
@@ -94,6 +104,7 @@ public class RegistroController {
 
     private void limpiarCampos() {
         usernameField.clear();
+        documentoField.clear();
         passwordField.clear();
         confirmarPasswordField.clear();
     }

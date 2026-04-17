@@ -25,17 +25,21 @@ public class JsonImporter {
             JsonNode root = mapper.readTree(new File(jsonPath));
             
             for (JsonNode node : root) {
+                // Convertir altura de cm a metros si es necesario (si es > 10)
+                double altura = node.get("altura").asDouble();
+                if (altura > 10) {
+                    altura = altura / 100.0; // Convertir de cm a metros
+                }
+                
                 Usuario usuario = new Usuario(
-                    0, // ID será generado por la BD
-                    node.get("documento").asText(),
                     node.get("nombre").asText(),
                     node.get("edad").asInt(),
-                    node.get("sexo").asText(),
                     node.get("peso").asDouble(),
-                    node.get("altura").asDouble(),
+                    altura,
                     node.get("objetivo").asText(),
                     node.get("calorias").asDouble(),
-                    null // tipo_membresia
+                    node.get("sexo").asText(),
+                    node.get("documento").asText()
                 );
                 usuarioService.guardar(usuario);
             }
@@ -48,7 +52,7 @@ public class JsonImporter {
     
     /**
      * Carga abandonos desde un archivo JSON e los inserta en la base de datos
-     * Nota: El JSON contiene "nombreUsuario", buscaremos el ID por nombre
+     * Nota: El JSON contiene "documento", buscaremos el ID por documento
      */
     public static void importarAbandonos(String jsonPath) {
         try {
@@ -57,8 +61,8 @@ public class JsonImporter {
             JsonNode root = mapper.readTree(new File(jsonPath));
             
             for (JsonNode node : root) {
-                String nombreUsuario = node.get("nombreUsuario").asText();
-                int usuarioId = usuarioService.obtenerIdPorNombre(nombreUsuario);
+                String documento = node.get("documento").asText();
+                int usuarioId = usuarioService.obtenerIdPorDocumento(documento);
                 
                 if (usuarioId > 0) {
                     Abandono abandono = new Abandono(
@@ -69,7 +73,7 @@ public class JsonImporter {
                     );
                     abandonoService.guardar(abandono);
                 } else {
-                    System.err.println("⚠ No se encontró usuario con nombre: " + nombreUsuario);
+                    System.err.println("⚠ No se encontró usuario con documento: " + documento);
                 }
             }
             System.out.println("✓ Abandonos importados exitosamente desde " + jsonPath);

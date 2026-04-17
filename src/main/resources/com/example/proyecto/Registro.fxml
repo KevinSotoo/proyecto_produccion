@@ -27,6 +27,12 @@
             </VBox>
 
             <VBox spacing="8">
+                <Label text="Documento:" style="-fx-text-fill: #2C3E50; -fx-font-weight: bold;"/>
+                <TextField fx:id="documentoField" promptText="Ingresa tu número de documento"
+                           style="-fx-background-radius: 10; -fx-pref-height: 35;"/>
+            </VBox>
+
+            <VBox spacing="8">
                 <Label text="Contraseña:" style="-fx-text-fill: #2C3E50; -fx-font-weight: bold;"/>
                 <PasswordField fx:id="passwordField" promptText="Crea una contraseña"
                                style="-fx-background-radius: 10; -fx-pref-height: 35;"/>

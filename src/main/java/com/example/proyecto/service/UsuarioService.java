@@ -196,6 +196,26 @@ public class UsuarioService {
     }
 
     /**
+     * Obtiene el ID de un usuario por su documento
+     */
+    public int obtenerIdPorDocumento(String documento) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "SELECT id FROM usuarios WHERE documento = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, documento);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt("id");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("✗ Error al obtener ID del usuario por documento: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    /**
      * Guarda un único usuario
      */
     public void guardar(Usuario usuario) {

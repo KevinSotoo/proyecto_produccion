@@ -102,4 +102,41 @@ public class EstadisticasController {
             System.err.println("Error al volver: " + e.getMessage());
         }
     }
+
+    /**
+     * ✅ NUEVO: Ver abandonos
+     */
+    @FXML
+    private void verAbandonos() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    Main.class.getResource("/com/example/proyecto/GestionAbandonos.fxml")
+            );
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) pieChart.getScene().getWindow();
+            stage.setMaximized(false);
+            stage.setScene(scene);
+            stage.setMaximized(true);
+        } catch (IOException e) {
+            System.err.println("Error al abrir abandonos: " + e.getMessage());
+        }
+    }
+
+    /**
+     * ✅ NUEVO: Cerrar sesión
+     */
+    @FXML
+    private void salir() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    Main.class.getResource("/com/example/proyecto/Login.fxml")
+            );
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) pieChart.getScene().getWindow();
+            stage.setMaximized(false);
+            stage.setScene(scene);
+        } catch (IOException e) {
+            System.err.println("Error al cerrar sesión: " + e.getMessage());
+        }
+    }
 }

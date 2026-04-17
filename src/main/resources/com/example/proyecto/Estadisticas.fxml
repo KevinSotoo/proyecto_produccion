@@ -5,7 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefWidth="1100.0" prefHeight="700.0"
+<BorderPane prefWidth="1400.0" prefHeight="800.0"
             style="-fx-background-color: #F4F6F9;"
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml"
@@ -20,6 +20,7 @@
                    style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
             <Pane HBox.hgrow="ALWAYS"/>
             <Button text="Cerrar Sesión"
+                    onAction="#salir"
                     style="-fx-background-color: white; -fx-text-fill: #1F3F6D; -fx-font-weight: bold; -fx-background-radius: 20;"/>
         </HBox>
     </top>
@@ -33,12 +34,14 @@
                     onAction="#volverGestion"
                     style="-fx-background-radius: 10;"/>
             <Button text="Causas de Abandono" maxWidth="Infinity"
+                    onAction="#verAbandonos"
                     style="-fx-background-radius: 10;"/>
             <Button text="Reportes" maxWidth="Infinity"
                     style="-fx-background-radius: 10;"/>
             <Button text="Estadísticas" maxWidth="Infinity"
                     style="-fx-background-color: #2C5FA8; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10;"/>
             <Button text="Salir" maxWidth="Infinity"
+                    onAction="#salir"
                     style="-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-background-radius: 10;"/>
         </VBox>
     </left>
