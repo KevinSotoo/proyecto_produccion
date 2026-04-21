@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefWidth="500.0" prefHeight="360.0"
+            style="-fx-background-color: #F4F6F9;"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.proyecto.controller.DbSelectorController">
+
+    <fx:define>
+        <ToggleGroup fx:id="dbToggleGroup"/>
+    </fx:define>
+
+    <center>
+        <VBox spacing="20" alignment="CENTER">
+            <padding><Insets top="40" right="60" bottom="40" left="60"/></padding>
+
+            <Label text="Sistema Gimnasio"
+                   style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1F3F6D;"/>
+
+            <Label text="Selecciona el motor de base de datos"
+                   style="-fx-font-size: 16px; -fx-text-fill: #2C3E50;"/>
+
+            <VBox spacing="10" maxWidth="Infinity">
+                <RadioButton fx:id="mysqlRadio"
+                             text="MySQL"
+                             toggleGroup="$dbToggleGroup"
+                             style="-fx-text-fill: #2C3E50; -fx-font-size: 14px;"/>
+
+                <RadioButton fx:id="sqliteRadio"
+                             text="SQLite"
+                             toggleGroup="$dbToggleGroup"
+                             style="-fx-text-fill: #2C3E50; -fx-font-size: 14px;"/>
+            </VBox>
+
+            <Button text="Continuar"
+                    onAction="#continuarAlLogin"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: #2C5FA8; -fx-text-fill: white;
+                           -fx-font-weight: bold; -fx-background-radius: 10;
+                           -fx-pref-height: 40; -fx-font-size: 14px;"/>
+
+            <Label fx:id="errorLabel" text=""
+                   style="-fx-text-fill: #E74C3C; -fx-font-size: 12px;"/>
+        </VBox>
+    </center>
+
+</BorderPane>
+
+

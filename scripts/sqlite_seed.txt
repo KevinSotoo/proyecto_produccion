@@ -1,0 +1,95 @@
+-- Script SQLite local: crea tablas e inserta datos base
+-- Ejecutar ejemplo: sqlite3 data/gym_db.sqlite < scripts/sqlite_seed.txt
+
+PRAGMA foreign_keys = OFF;
+DROP TABLE IF EXISTS abandonos;
+DROP TABLE IF EXISTS cuentas;
+DROP TABLE IF EXISTS membresias;
+DROP TABLE IF EXISTS usuarios;
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE usuarios (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  documento TEXT NOT NULL UNIQUE,
+  nombre TEXT NOT NULL,
+  edad INTEGER,
+  sexo TEXT,
+  peso REAL,
+  altura REAL,
+  objetivo TEXT,
+  calorias REAL,
+  tipo_membresia TEXT DEFAULT 'Basica',
+  abandonado INTEGER DEFAULT 0,
+  fecha_creacion TEXT DEFAULT (datetime('now'))
+);
+
+CREATE TABLE cuentas (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL,
+  rol TEXT NOT NULL,
+  usuario_id INTEGER,
+  fecha_creacion TEXT DEFAULT (datetime('now')),
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL
+);
+
+CREATE TABLE abandonos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  usuario_id INTEGER NOT NULL,
+  fecha_abandono TEXT NOT NULL,
+  motivo TEXT,
+  fecha_creacion TEXT DEFAULT (datetime('now')),
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+-- Estructura compatible con MembresiaService
+CREATE TABLE membresias (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  usuario_id INTEGER NOT NULL,
+  tipo_membresia TEXT NOT NULL,
+  fecha_inicio TEXT NOT NULL,
+  fecha_vencimiento TEXT NOT NULL,
+  precio REAL NOT NULL,
+  estado TEXT NOT NULL,
+  fecha_registro TEXT,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+INSERT INTO usuarios (documento, nombre, edad, sexo, peso, altura, objetivo, calorias, tipo_membresia, abandonado) VALUES
+('1025528936', 'Kevin', 20, 'Masculino', 76.0, 174.0, 'Ganar masa muscular', 2754.0, 'Basica', 1),
+('1938475620', 'Daniel', 22, 'Masculino', 65.0, 180.0, 'Ganar masa muscular', 2404.0, 'Basica', 0),
+('5673829104', 'Sebastian', 19, 'Masculino', 50.0, 184.0, 'Ganar masa muscular', 1917.0, 'Basica', 0),
+('9081726354', 'Nicolas', 21, 'Masculino', 71.0, 174.0, 'Ganar masa muscular', 2776.0, 'Basica', 0),
+('3748291056', 'Andres', 23, 'Masculino', 90.0, 178.0, 'Perder grasa', 2541.0, 'Basica', 0),
+('6519203847', 'Camila', 22, 'Femenino', 58.0, 162.0, 'Mantener peso', 1980.0, 'Basica', 0),
+('2847561930', 'Valeria', 20, 'Femenino', 52.0, 158.0, 'Ganar masa muscular', 2150.0, 'Basica', 0),
+('7192038456', 'Miguel', 25, 'Masculino', 78.0, 176.0, 'Mantener peso', 2620.0, 'Basica', 0),
+('4829105736', 'Laura', 19, 'Femenino', 61.0, 165.0, 'Perder grasa', 1750.0, 'Basica', 0),
+('9301758462', 'Santiago', 24, 'Masculino', 95.0, 182.0, 'Perder grasa', 2890.0, 'Basica', 0),
+('2758491036', 'Isabella', 21, 'Femenino', 55.0, 160.0, 'Mantener peso', 1870.0, 'Basica', 0),
+('8162039475', 'Juan', 28, 'Masculino', 82.0, 179.0, 'Ganar masa muscular', 3100.0, 'Basica', 0),
+('5039182746', 'Daniela', 22, 'Femenino', 67.0, 168.0, 'Perder grasa', 1920.0, 'Basica', 0),
+('6928471503', 'Carlos', 30, 'Masculino', 88.0, 175.0, 'Mantener peso', 2710.0, 'Basica', 0),
+('1475938206', 'Sofia', 18, 'Femenino', 49.0, 155.0, 'Ganar masa muscular', 2040.0, 'Basica', 0),
+('8745201936', 'Mateo', 26, 'Masculino', 73.0, 177.0, 'Mantener peso', 2560.0, 'Basica', 0),
+('3910284756', 'Alejandra', 23, 'Femenino', 70.0, 170.0, 'Perder grasa', 1830.0, 'Basica', 0),
+('6283749105', 'Natalia', 20, 'Femenino', 54.0, 161.0, 'Mantener peso', 1790.0, 'Basica', 0),
+('9502847613', 'Manuel', 30, 'Masculino', 80.0, 170.0, 'Perder grasa', 1661.0, 'Basica', 0),
+('2047591836', 'Ana', 22, 'Femenino', 57.0, 160.0, 'Ganar masa muscular', 2186.0, 'Basica', 0),
+('7639182504', 'Luis', 20, 'Masculino', 79.0, 179.0, 'Ganar masa muscular', 3211.0, 'Basica', 0);
+
+INSERT INTO cuentas (username, password, rol, usuario_id) VALUES
+('admin', '1234', 'admin', NULL),
+('danielgamplays', 'daniela', 'usuario', NULL),
+('1025528936', 'holahola', 'usuario', (SELECT id FROM usuarios WHERE documento = '1025528936' LIMIT 1)),
+('1938475620', 'aloalo', 'usuario', (SELECT id FROM usuarios WHERE documento = '1938475620' LIMIT 1)),
+('5673829104', '1234', 'usuario', (SELECT id FROM usuarios WHERE documento = '5673829104' LIMIT 1));
+
+INSERT INTO abandonos (usuario_id, fecha_abandono, motivo) VALUES
+((SELECT id FROM usuarios WHERE documento = '1025528936' LIMIT 1), '2024-03-15', 'Falta de tiempo disponible para asistir al gimnasio');
+
+-- Datos base de membresias para no insertar manualmente
+INSERT INTO membresias (usuario_id, tipo_membresia, fecha_inicio, fecha_vencimiento, precio, estado, fecha_registro)
+SELECT id, 'Basica', '2024-01-01', '2024-12-31', 50000.00, 'Activa', '2024-01-01 00:00:00'
+FROM usuarios;
+

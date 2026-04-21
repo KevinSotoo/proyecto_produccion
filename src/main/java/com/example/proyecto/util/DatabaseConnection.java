@@ -7,47 +7,85 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DatabaseConnection {
-    private static String URL;
-    private static String USER;
-    private static String PASSWORD;
+    public enum DatabaseEngine {
+        MYSQL,
+        SQLITE
+    }
+
+    private static String url;
+    private static String user;
+    private static String password;
+    private static final Properties props = new Properties();
+    private static DatabaseEngine currentEngine = DatabaseEngine.MYSQL;
 
     static {
         try {
-            // Cargar propiedades del archivo
-            Properties props = new Properties();
             InputStream input = DatabaseConnection.class.getClassLoader()
                     .getResourceAsStream("database.properties");
 
             if (input == null) {
-                System.out.println("✗ Archivo database.properties no encontrado");
-                // Valores por defecto para la universidad
-                URL = "jdbc:mysql://172.30.16.76:3306/gym_db";
-                USER = "kssoto29";
-                PASSWORD = "67001429";
+                System.out.println("Archivo database.properties no encontrado, usando valores por defecto");
             } else {
                 props.load(input);
-                URL = props.getProperty("db.url");
-                USER = props.getProperty("db.user");
-                PASSWORD = props.getProperty("db.password");
                 input.close();
             }
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            System.out.println("✓ Driver MySQL cargado correctamente");
+            applyEngineConfig(currentEngine);
 
         } catch (Exception e) {
-            System.out.println("✗ Error al cargar configuración: " + e.getMessage());
+            System.out.println("Error al cargar configuracion de base de datos: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
+    private static void applyEngineConfig(DatabaseEngine engine) throws ClassNotFoundException {
+        if (engine == DatabaseEngine.SQLITE) {
+            url = getPropertyOrDefault("sqlite.url", "jdbc:sqlite:data/gym_db.sqlite");
+            user = getPropertyOrDefault("sqlite.user", "");
+            password = getPropertyOrDefault("sqlite.password", "");
+            Class.forName("org.sqlite.JDBC");
+            System.out.println("Motor de BD seleccionado: SQLITE");
+            return;
+        }
+
+        // Compatibilidad con configuracion antigua db.*
+        url = getPropertyOrDefault("mysql.url", getPropertyOrDefault("db.url", "jdbc:mysql://localhost:3306/gym_db"));
+        user = getPropertyOrDefault("mysql.user", getPropertyOrDefault("db.user", "root"));
+        password = getPropertyOrDefault("mysql.password", getPropertyOrDefault("db.password", ""));
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        System.out.println("Motor de BD seleccionado: MYSQL");
+    }
+
+    private static String getPropertyOrDefault(String key, String defaultValue) {
+        String value = props.getProperty(key);
+        return value == null || value.isBlank() ? defaultValue : value;
+    }
+
+    public static synchronized void setEngine(DatabaseEngine engine) {
+        try {
+            currentEngine = engine;
+            applyEngineConfig(engine);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("No se pudo cargar el driver para " + engine, e);
+        }
+    }
+
+    public static DatabaseEngine getEngine() {
+        return currentEngine;
+    }
+
     public static Connection getConnection() throws SQLException {
         try {
-            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("✓ Conexión exitosa a: " + URL);
+            Connection conn;
+            if (currentEngine == DatabaseEngine.SQLITE) {
+                conn = DriverManager.getConnection(url);
+            } else {
+                conn = DriverManager.getConnection(url, user, password);
+            }
+            System.out.println("Conexion exitosa a: " + url);
             return conn;
         } catch (SQLException e) {
-            System.out.println("✗ Error al conectar: " + e.getMessage());
+            System.out.println("Error al conectar: " + e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -57,15 +95,18 @@ public class DatabaseConnection {
         try {
             Connection conn = getConnection();
             if (conn != null && !conn.isClosed()) {
-                System.out.println("✓ Prueba de conexión exitosa");
+                System.out.println("Prueba de conexion exitosa");
                 conn.close();
             }
         } catch (SQLException e) {
-            System.out.println("✗ Error en la prueba de conexión: " + e.getMessage());
+            System.out.println("Error en la prueba de conexion: " + e.getMessage());
         }
     }
 
     public static String getConnectionInfo() {
-        return "Conectado a: " + URL + " | Usuario: " + USER;
+        if (currentEngine == DatabaseEngine.SQLITE) {
+            return "Motor: SQLITE | URL: " + url;
+        }
+        return "Motor: MYSQL | URL: " + url + " | Usuario: " + user;
     }
 }
