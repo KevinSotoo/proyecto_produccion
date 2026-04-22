@@ -89,7 +89,7 @@ INSERT INTO cuentas (username, password, rol, usuario_id) VALUES
 ('5673829104', '1234', 'usuario', (SELECT id FROM usuarios WHERE documento = '5673829104' LIMIT 1));
 
 INSERT INTO abandonos (usuario_id, fecha_abandono, motivo) VALUES
-((SELECT id FROM usuarios WHERE documento = '1025528936' LIMIT 1), '2024-03-15', 'Falta de tiempo disponible para asistir al gimnasio');
+((SELECT id FROM usuarios WHERE documento = '1025528936' LIMIT 1), '2026-03-15', 'Falta de tiempo disponible para asistir al gimnasio');
 
 -- Datos base de membresias para no insertar manualmente
 INSERT INTO membresias (usuario_id, tipo_membresia, fecha_inicio, fecha_vencimiento, precio, estado, fecha_registro)
