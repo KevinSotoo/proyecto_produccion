@@ -75,6 +75,7 @@ public class UsuarioService {
                     }
                 }
             }
+            conn.commit();
             System.out.println("✓ Datos guardados en BD correctamente");
         } catch (SQLException e) {
             System.out.println("✗ Error al guardar en BD: " + e.getMessage());
@@ -232,6 +233,7 @@ public class UsuarioService {
                 stmt.setDouble(8, usuario.getCalorias());
                 stmt.setString(9, usuario.getTipoMembresia());
                 stmt.executeUpdate();
+                conn.commit();
                 System.out.println("✓ Usuario " + usuario.getNombre() + " guardado correctamente");
             }
         } catch (SQLException e) {
