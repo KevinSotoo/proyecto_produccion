@@ -79,5 +79,82 @@ public class MembresiaService {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Valida si una membresía está activa usando la fecha del servidor (World Time API)
+     * @param membresiaId ID de la membresía a validar
+     * @return true si la membresía está activa, false si está vencida
+     */
+    public boolean validarMembresiaActiva(int membresiaId) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "SELECT fecha_vencimiento FROM membresias WHERE id=?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, membresiaId);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        LocalDate fechaVencimiento = rs.getDate("fecha_vencimiento").toLocalDate();
+                        LocalDate hoyServidor = TimeService.obtenerFechaDelServidor();
+                        return fechaVencimiento.isAfter(hoyServidor) || fechaVencimiento.isEqual(hoyServidor);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Obtiene todas las membresías activas de un usuario
+     * @param usuarioId ID del usuario
+     * @return Lista de membresías activas
+     */
+    public List<Membresia> obtenerMembresiasActivasDelUsuario(int usuarioId) {
+        List<Membresia> membresiasActivas = new ArrayList<>();
+        LocalDate hoyServidor = TimeService.obtenerFechaDelServidor();
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "SELECT * FROM membresias WHERE usuario_id=?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, usuarioId);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        LocalDate fechaVencimiento = rs.getDate("fecha_vencimiento").toLocalDate();
+                        // Solo agregar si la membresía no está vencida
+                        if (fechaVencimiento.isAfter(hoyServidor) || fechaVencimiento.isEqual(hoyServidor)) {
+                            Membresia m = new Membresia(
+                                rs.getInt("id"),
+                                rs.getInt("usuario_id"),
+                                rs.getString("tipo_membresia"),
+                                rs.getDate("fecha_inicio").toLocalDate(),
+                                fechaVencimiento,
+                                rs.getDouble("precio"),
+                                rs.getString("estado"),
+                                rs.getString("fecha_registro")
+                            );
+                            membresiasActivas.add(m);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return membresiasActivas;
+    }
+
+    /**
+     * Obtiene información de la sincronización con el servidor
+     * @return String con la zona horaria del servidor
+     */
+    public String obtenerInfoServidor() {
+        try {
+            LocalDateTime horaServidor = TimeService.obtenerHoraDelServidor();
+            String zonaHoraria = TimeService.obtenerZonaHoraria();
+            return "Hora del servidor: " + horaServidor + " (" + zonaHoraria + ")";
+        } catch (Exception e) {
+            return "Error al conectar con el servidor de tiempo";
+        }
+    }
 }
 
