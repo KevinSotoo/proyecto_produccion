@@ -230,11 +230,11 @@ public class UsuarioService {
                 stmt.setDouble(5, usuario.getPeso());
                 stmt.setDouble(6, usuario.getAltura());
                 stmt.setString(7, usuario.getObjetivo());
-                stmt.setDouble(8, usuario.getCalorias());
-                stmt.setString(9, usuario.getTipoMembresia());
-                stmt.executeUpdate();
-                conn.commit();
-                System.out.println("✓ Usuario " + usuario.getNombre() + " guardado correctamente");
+            stmt.setDouble(8, usuario.getCalorias());
+            stmt.setString(9, usuario.getTipoMembresia());
+            stmt.executeUpdate();
+            conn.commit();
+            System.out.println("✓ Usuario " + usuario.getNombre() + " guardado correctamente");
             }
         } catch (SQLException e) {
             System.err.println("✗ Error al guardar usuario: " + e.getMessage());

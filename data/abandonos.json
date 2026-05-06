@@ -1,7 +1,7 @@
 [ {
-  "id" : 1,
   "documento" : "1025528936",
-  "fechaAbandono" : "2024-03-15",
-  "motivo" : "Falta de tiempo disponible para asistir al gimnasio"
+  "fechaAbandono" : "2026-03-15",
+  "motivo" : "Falta de tiempo disponible para asistir al gimnasio",
+  "fechaCreacion" : "2026-03-15"
 } ]
 

@@ -1,0 +1,112 @@
+// ====================================
+// SCRIPT DE INICIALIZACIÓN MONGODB
+// ====================================
+// Ejecuta estos comandos en MongoDB Compass o MongoDB Shell
+// para crear la estructura de la base de datos
+
+// 1. Seleccionar/Crear base de datos
+use gym_db
+
+// 2. Crear colecciones
+db.createCollection("usuarios")
+db.createCollection("cuentas")
+db.createCollection("abandonos")
+db.createCollection("membresias")
+
+// 3. Crear índices para mejorar rendimiento
+db.usuarios.createIndex({ "documento": 1 })
+db.cuentas.createIndex({ "username": 1 })
+db.abandonos.createIndex({ "documento": 1 })
+db.membresias.createIndex({ "documento": 1 })
+
+// ====================================
+// ESTRUCTURA DE DOCUMENTOS
+// ====================================
+
+// Usuarios
+db.usuarios.insertOne({
+  "nombre": "Kevin",
+  "edad": 20,
+  "peso": 76.0,
+  "altura": 174.0,
+  "objetivo": "Ganar masa muscular",
+  "calorias": 2754.0,
+  "sexo": "Masculino",
+  "documento": "1025528936",
+  "abandonado": true,
+  "tipoMembresia": "Básica",
+  "fechaRegistro": "2024-01-15T10:30:00"
+})
+
+// Cuentas
+db.cuentas.insertOne({
+  "username": "admin",
+  "password": "1234",
+  "rol": "admin",
+  "fechaCreacion": "2024-01-15T10:30:00"
+})
+
+// Abandonos
+db.abandonos.insertOne({
+  "documento": "1025528936",
+  "fechaAbandono": "2024-03-15",
+  "motivo": "Falta de tiempo disponible para asistir al gimnasio",
+  "fechaRegistro": "2024-03-15T14:20:00"
+})
+
+// Membresías
+db.membresias.insertOne({
+  "documento": "1025528936",
+  "tipo": "Premium",
+  "fechaInicio": "2024-01-15",
+  "fechaVencimiento": "2024-04-15",
+  "estado": "activa"
+})
+
+// ====================================
+// CONSULTAS ÚTILES PARA VERIFICAR
+// ====================================
+
+// Ver todos los usuarios
+db.usuarios.find()
+
+// Ver todas las cuentas
+db.cuentas.find()
+
+// Ver todos los abandonos
+db.abandonos.find()
+
+// Ver todas las membresías
+db.membresias.find()
+
+// Contar documentos en cada colección
+db.usuarios.countDocuments()
+db.cuentas.countDocuments()
+db.abandonos.countDocuments()
+db.membresias.countDocuments()
+
+// Buscar usuario por documento
+db.usuarios.findOne({ "documento": "1025528936" })
+
+// Buscar cuenta por username
+db.cuentas.findOne({ "username": "admin" })
+
+// ====================================
+// OPERACIONES DE MANTENIMIENTO
+// ====================================
+
+// Eliminar todos los documentos (CUIDADO)
+db.usuarios.deleteMany({})
+db.cuentas.deleteMany({})
+db.abandonos.deleteMany({})
+db.membresias.deleteMany({})
+
+// Actualizar usuario
+db.usuarios.updateOne(
+  { "documento": "1025528936" },
+  { $set: { "tipoMembresia": "Premium", "abandonado": false } }
+)
+
+// Eliminar un documento específico
+db.abandonos.deleteOne({ "documento": "1025528936" })
+

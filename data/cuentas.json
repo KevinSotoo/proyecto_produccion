@@ -1,21 +1,26 @@
 [ {
   "username" : "admin",
   "password" : "1234",
-  "rol" : "admin"
+  "rol" : "admin",
+  "fechaCreacion" : "2024-01-01"
 }, {
   "username" : "danielgamplays",
   "password" : "daniela",
-  "rol" : "usuario"
+  "rol" : "usuario",
+  "fechaCreacion" : "2024-01-01"
 }, {
   "username" : "1025528936",
   "password" : "holahola",
-  "rol" : "usuario"
+  "rol" : "usuario",
+  "fechaCreacion" : "2024-01-02"
 }, {
   "username" : "1938475620",
   "password" : "aloalo",
-  "rol" : "usuario"
+  "rol" : "usuario",
+  "fechaCreacion" : "2024-01-03"
 }, {
   "username" : "5673829104",
   "password" : "1234",
-  "rol" : "usuario"
+  "rol" : "usuario",
+  "fechaCreacion" : "2024-01-04"
 } ]
