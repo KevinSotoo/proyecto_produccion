@@ -177,26 +177,6 @@ public class UsuarioService {
     }
 
     /**
-     * Obtiene el ID de un usuario por su nombre
-     */
-    public int obtenerIdPorNombre(String nombre) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            String sql = "SELECT id FROM usuarios WHERE nombre = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, nombre);
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getInt("id");
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("✗ Error al obtener ID del usuario: " + e.getMessage());
-        }
-        return -1;
-    }
-
-    /**
      * Obtiene el ID de un usuario por su documento
      */
     public int obtenerIdPorDocumento(String documento) {
@@ -214,6 +194,38 @@ public class UsuarioService {
             System.err.println("✗ Error al obtener ID del usuario por documento: " + e.getMessage());
         }
         return -1;
+    }
+
+    /**
+     * Guarda un único usuario
+     */
+    public Usuario obtenerPorDocumento(String documento) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "SELECT id, documento, nombre, edad, sexo, peso, altura, objetivo, calorias, tipo_membresia FROM usuarios WHERE documento = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, documento);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return new Usuario(
+                                rs.getInt("id"),
+                                rs.getString("nombre"),
+                                rs.getInt("edad"),
+                                rs.getDouble("peso"),
+                                rs.getDouble("altura"),
+                                rs.getString("objetivo"),
+                                rs.getDouble("calorias"),
+                                rs.getString("sexo"),
+                                rs.getString("documento"),
+                                false, // abandonado - se actualiza desde tabla abandonos
+                                rs.getString("tipo_membresia")
+                        );
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("✗ Error al obtener usuario por documento: " + e.getMessage());
+        }
+        return null;
     }
 
     /**

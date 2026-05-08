@@ -270,32 +270,27 @@ class Ejemplo7_DashboardMembresias {
             List<Membresia> todasLasMembresias = membresiaService.cargar();
             LocalDate hoy = TimeService.obtenerFechaDelServidor();
             
-            int activas = 0;
-            int vencidas = 0;
-            int porVencer = 0; // Dentro de 7 días
-            
+            final int[] activas = {0};
+            final int[] vencidas = {0};
+            final int[] porVencer = {0};
+
             for (Membresia m : todasLasMembresias) {
                 if (m.getFechaVencimiento().isBefore(hoy)) {
-                    vencidas++;
+                    vencidas[0]++;
                 } else if (ChronoUnit.DAYS.between(hoy, m.getFechaVencimiento()) <= 7) {
-                    porVencer++;
+                    porVencer[0]++;
                 } else {
-                    activas++;
+                    activas[0]++;
                 }
             }
             
             Platform.runLater(() -> {
                 System.out.println("\n=== ESTADÍSTICAS DE MEMBRESÍAS ===");
-                System.out.println("Membresías Activas: " + activas);
-                System.out.println("Membresías por Vencer (7 días): " + porVencer);
-                System.out.println("Membresías Vencidas: " + vencidas);
+                System.out.println("Membresías Activas: " + activas[0]);
+                System.out.println("Membresías por Vencer (7 días): " + porVencer[0]);
+                System.out.println("Membresías Vencidas: " + vencidas[0]);
                 System.out.println("Total: " + todasLasMembresias.size());
                 System.out.println("==================================\n");
-                
-                // Actualizar labels en UI
-                // labelActivas.setText(String.valueOf(activas));
-                // labelProximas.setText(String.valueOf(porVencer));
-                // labelVencidas.setText(String.valueOf(vencidas));
             });
         }).start();
     }

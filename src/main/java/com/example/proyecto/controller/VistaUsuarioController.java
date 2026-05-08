@@ -4,6 +4,9 @@ import com.example.proyecto.Main;
 import com.example.proyecto.model.Usuario;
 import com.example.proyecto.service.AbandonoService;
 import com.example.proyecto.service.UsuarioService;
+import com.example.proyecto.service.MembresiaService;
+import com.example.proyecto.service.TimeService;
+import com.example.proyecto.model.Membresia;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,6 +15,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class VistaUsuarioController {
@@ -31,11 +36,15 @@ public class VistaUsuarioController {
     @FXML private ComboBox<String> objetivoComboBox;
     @FXML private Label bienvenidaLabel;
     @FXML private TextArea motivoCancelacionField;
+    @FXML private Label estadoMembresiaLabel;
+    @FXML private Label fechaVencimientoLabel;
 
     private String documentoActual;
     private Usuario usuarioActual;
     private final UsuarioService service = new UsuarioService();
     private final AbandonoService abandonoService = new AbandonoService();
+    private final MembresiaService membresiaService = new MembresiaService();
+    private final TimeService timeService = new TimeService();
 
     @FXML
     public void initialize() {
@@ -78,9 +87,57 @@ public class VistaUsuarioController {
                 pesoField.setText(String.valueOf(usuarioActual.getPeso()));
                 alturaField.setText(String.valueOf(usuarioActual.getAltura()));
                 objetivoComboBox.setValue(usuarioActual.getObjetivo());
+
+                // Cargar estado de membresía
+                cargarEstadoMembresia(usuarioActual);
             }
         } catch (IOException e) {
             mostrarAlerta("Error al cargar tus datos: " + e.getMessage());
+        }
+    }
+
+    private void cargarEstadoMembresia(Usuario usuario) {
+        new Thread(() -> {
+            List<Membresia> membresiasActivas = membresiaService.obtenerMembresiasActivasDelUsuario(usuario.getId());
+
+            javafx.application.Platform.runLater(() -> {
+                if (!membresiasActivas.isEmpty()) {
+                    Membresia m = membresiasActivas.get(0); // Primera membresía activa
+                    estadoMembresiaLabel.setText("✓ " + m.getTipoMembresia().toUpperCase());
+                    estadoMembresiaLabel.setStyle("-fx-text-fill: #00AA00; -fx-font-size: 14px; -fx-font-weight: bold;");
+                    fechaVencimientoLabel.setText("Vence: " + m.getFechaVencimiento());
+
+                    // Verificar si vence pronto
+                    verificarMembresiaPorVencer(m);
+                } else {
+                    estadoMembresiaLabel.setText("✗ SIN MEMBRESÍA ACTIVA");
+                    estadoMembresiaLabel.setStyle("-fx-text-fill: #FF0000; -fx-font-size: 14px; -fx-font-weight: bold;");
+                    fechaVencimientoLabel.setText("Renueva tu membresía");
+                }
+            });
+        }).start();
+    }
+
+    private void verificarMembresiaPorVencer(Membresia membresia) {
+        try {
+            LocalDate hoy = TimeService.obtenerFechaDelServidor();
+            long diasRestantes = ChronoUnit.DAYS.between(hoy, membresia.getFechaVencimiento());
+
+            if (diasRestantes > 0 && diasRestantes <= 7) {
+                // Membresía vence pronto
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Alerta: Membresía por Vencer");
+                alert.setHeaderText("¡Tu membresía está por expirar!");
+                alert.setContentText(
+                        "Tu membresía (" + membresia.getTipoMembresia() +
+                                ") vence en " + diasRestantes + " días.\n\n" +
+                                "Fecha: " + membresia.getFechaVencimiento() + "\n\n" +
+                                "Considera renovarla para continuar disfrutando de nuestros servicios."
+                );
+                alert.showAndWait();
+            }
+        } catch (Exception e) {
+            // Si hay error con la API, no mostrar alerta
         }
     }
 
@@ -149,7 +206,7 @@ public class VistaUsuarioController {
         confirmar.setTitle("Cancelar Suscripción");
         confirmar.setHeaderText("¿Está seguro?");
         confirmar.setContentText("¿Desea cancelar su suscripción? Esta acción no se puede deshacer.");
-        
+
         if (confirmar.showAndWait().orElse(null) != ButtonType.OK) {
             return;
         }
@@ -177,7 +234,7 @@ public class VistaUsuarioController {
             abandonoService.agregarAbandono(usuarioActual.getNombre(), motivo);
 
             mostrarExito("Suscripción cancelada. Gracias por usar nuestros servicios.");
-            
+
             // Regresar al login después de 2 segundos
             Thread.sleep(1500);
             salir();
@@ -225,4 +282,3 @@ public class VistaUsuarioController {
         alert.showAndWait();
     }
 }
-

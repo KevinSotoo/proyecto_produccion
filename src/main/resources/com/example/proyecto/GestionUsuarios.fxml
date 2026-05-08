@@ -74,6 +74,7 @@
                                         <TableColumn fx:id="caloriasColumn"  text="Calorías"  prefWidth="85"/>
                                         <TableColumn fx:id="sexoColumn"      text="Sexo"      prefWidth="80"/>
                                         <TableColumn fx:id="tipoMembresiaColumn" text="Membresía" prefWidth="100"/>
+                                        <TableColumn fx:id="estadoMembresiaColumn" text="Estado Membresía" prefWidth="120"/>
                                         <TableColumn fx:id="abandonadoColumn" text="Estado"    prefWidth="80"/>
                                     </columns>
                                 </TableView>

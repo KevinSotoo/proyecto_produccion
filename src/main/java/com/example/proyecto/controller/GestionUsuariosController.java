@@ -5,6 +5,9 @@ import com.example.proyecto.model.Abandono;
 import com.example.proyecto.model.Usuario;
 import com.example.proyecto.service.AbandonoService;
 import com.example.proyecto.service.UsuarioService;
+import com.example.proyecto.service.MembresiaService;
+import com.example.proyecto.service.TimeService;
+import com.example.proyecto.model.Membresia;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -40,6 +43,7 @@ public class GestionUsuariosController {
     @FXML private TableColumn<Usuario, String> sexoColumn;
     @FXML private TableColumn<Usuario, String> documentoColumn;
     @FXML private TableColumn<Usuario, String> tipoMembresiaColumn;
+    @FXML private TableColumn<Usuario, String> estadoMembresiaColumn;
     @FXML private TableColumn<Usuario, Boolean> abandonadoColumn;
     @FXML private ComboBox<String> sexoComboBox;
     @FXML private ComboBox<String> objetivoComboBox;
@@ -60,6 +64,7 @@ public class GestionUsuariosController {
 
     private final UsuarioService service = new UsuarioService();
     private final AbandonoService abandonoService = new AbandonoService();
+    private final MembresiaService membresiaService = new MembresiaService();
     private final ObservableList<Abandono> listaAbandonos = FXCollections.observableArrayList();
 
     @FXML
@@ -73,6 +78,7 @@ public class GestionUsuariosController {
         sexoColumn.setCellValueFactory(new PropertyValueFactory<>("sexo"));
         documentoColumn.setCellValueFactory(new PropertyValueFactory<>("documento"));
         tipoMembresiaColumn.setCellValueFactory(new PropertyValueFactory<>("tipoMembresia"));
+        // estadoMembresiaColumn uses custom cell factory
         abandonadoColumn.setCellValueFactory(cellData ->
             new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().isAbandonado())
         );
@@ -107,6 +113,32 @@ public class GestionUsuariosController {
             abandonosPane.setVisible(false);
             abandonosPane.setManaged(false);
         }
+
+        estadoMembresiaColumn.setCellFactory(col -> new TableCell<Usuario, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableRow().getItem() == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    Usuario usuario = getTableRow().getItem();
+                    // Check membership status in background
+                    new Thread(() -> {
+                        List<Membresia> membresiasActivas = membresiaService.obtenerMembresiasActivasDelUsuario(usuario.getId());
+                        javafx.application.Platform.runLater(() -> {
+                            if (!membresiasActivas.isEmpty()) {
+                                setText("✓ ACTIVA");
+                                setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
+                            } else {
+                                setText("✗ VENCIDA");
+                                setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+                            }
+                        });
+                    }).start();
+                }
+            }
+        });
     }
 
     public void setDocumentoActual(String documento) {
@@ -329,4 +361,3 @@ public class GestionUsuariosController {
         tipoMembresiaBox.setValue(null);
     }
 }
-

@@ -1,8 +1,12 @@
 package com.example.proyecto.controller;
 
 import com.example.proyecto.Main;
+import com.example.proyecto.model.Usuario;
+import com.example.proyecto.model.Membresia;
 import com.example.proyecto.service.CuentaUsuario;
 import com.example.proyecto.service.CuentaService;
+import com.example.proyecto.service.MembresiaService;
+import com.example.proyecto.service.UsuarioService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.List;
 
 public class LoginController {
 
@@ -20,6 +25,8 @@ public class LoginController {
     @FXML private Label errorLabel;
 
     private final CuentaService cuentaService = new CuentaService();
+    private final UsuarioService usuarioService = new UsuarioService();
+    private final MembresiaService membresiaService = new MembresiaService();
 
     @FXML
     private void iniciarSesion() {
@@ -40,6 +47,26 @@ public class LoginController {
         // Verificar usuario en JSON
         CuentaUsuario cuenta = cuentaService.buscarCuenta(username, password);
         if (cuenta != null) {
+            if (cuenta.getRol().equals("usuario")) {
+                // Validar membresía activa para usuarios
+                try {
+                    Usuario usuario = usuarioService.cargar().stream()
+                        .filter(u -> username.equals(u.getDocumento()))
+                        .findFirst()
+                        .orElse(null);
+
+                    if (usuario != null) {
+                        List<Membresia> membresiasActivas = membresiaService.obtenerMembresiasActivasDelUsuario(usuario.getId());
+                        if (membresiasActivas.isEmpty()) {
+                            errorLabel.setText("Tu membresía ha expirado. Contacta al administrador para renovarla.");
+                            return;
+                        }
+                    }
+                } catch (Exception e) {
+                    errorLabel.setText("Error al validar membresía: " + e.getMessage());
+                    return;
+                }
+            }
             abrirPantalla("/com/example/proyecto/GestionUsuarios.fxml", cuenta.getRol(), cuenta.getUsername());
         } else {
             errorLabel.setText("Usuario o contraseña incorrectos.");

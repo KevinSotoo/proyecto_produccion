@@ -9,7 +9,8 @@ import java.util.Properties;
 public class DatabaseConnection {
     public enum DatabaseEngine {
         MYSQL,
-        SQLITE
+        SQLITE,
+        MONGODB
     }
 
     private static String url;
@@ -45,6 +46,13 @@ public class DatabaseConnection {
             password = getPropertyOrDefault("sqlite.password", "");
             Class.forName("org.sqlite.JDBC");
             System.out.println("Motor de BD seleccionado: SQLITE");
+            return;
+        } else if (engine == DatabaseEngine.MONGODB) {
+            url = getPropertyOrDefault("mongodb.url", "mongodb://localhost:27017/gym_db");
+            user = getPropertyOrDefault("mongodb.user", "admin");
+            password = getPropertyOrDefault("mongodb.password", "admin");
+            Class.forName("org.mongodb.Driver");
+            System.out.println("Motor de BD seleccionado: MONGODB");
             return;
         }
 
@@ -92,20 +100,33 @@ public class DatabaseConnection {
     }
 
     public static void testConnection() {
-        try {
-            Connection conn = getConnection();
-            if (conn != null && !conn.isClosed()) {
-                System.out.println("Prueba de conexion exitosa");
-                conn.close();
+        if (currentEngine == DatabaseEngine.MONGODB) {
+            try {
+                com.example.proyecto.service.MongoDBService.conectar();
+                System.out.println("Prueba de conexion a MongoDB exitosa");
+            } catch (Exception e) {
+                System.out.println("Error en la prueba de conexion a MongoDB: " + e.getMessage());
+                throw new RuntimeException(e);
             }
-        } catch (SQLException e) {
-            System.out.println("Error en la prueba de conexion: " + e.getMessage());
+        } else {
+            try {
+                Connection conn = getConnection();
+                if (conn != null && !conn.isClosed()) {
+                    System.out.println("Prueba de conexion exitosa");
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error en la prueba de conexion: " + e.getMessage());
+                throw new RuntimeException(e);
+            }
         }
     }
 
     public static String getConnectionInfo() {
         if (currentEngine == DatabaseEngine.SQLITE) {
             return "Motor: SQLITE | URL: " + url;
+        } else if (currentEngine == DatabaseEngine.MONGODB) {
+            return "Motor: MONGODB | URL: " + url + " | Usuario: " + user;
         }
         return "Motor: MYSQL | URL: " + url + " | Usuario: " + user;
     }

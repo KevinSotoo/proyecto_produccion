@@ -21,6 +21,10 @@
             <Pane HBox.hgrow="ALWAYS"/>
             <Label fx:id="bienvenidaLabel" text="Bienvenido"
                    style="-fx-text-fill: white; -fx-font-size: 14px;"/>
+            <Label fx:id="estadoMembresiaLabel" text=""
+                   style="-fx-text-fill: #00AA00; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <Label fx:id="fechaVencimientoLabel" text=""
+                   style="-fx-text-fill: white; -fx-font-size: 12px;"/>
             <Button text="Cerrar Sesión" onAction="#salir"
                     style="-fx-background-color: white; -fx-text-fill: #1F3F6D;
                            -fx-font-weight: bold; -fx-background-radius: 20;"/>

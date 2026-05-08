@@ -21,6 +21,9 @@ public class DbSelectorController {
     private RadioButton sqliteRadio;
 
     @FXML
+    private RadioButton mongodbRadio;
+
+    @FXML
     private ToggleGroup dbToggleGroup;
 
     @FXML
@@ -33,9 +36,14 @@ public class DbSelectorController {
 
     @FXML
     private void continuarAlLogin() {
-        DatabaseConnection.DatabaseEngine engine = sqliteRadio.isSelected()
-                ? DatabaseConnection.DatabaseEngine.SQLITE
-                : DatabaseConnection.DatabaseEngine.MYSQL;
+        DatabaseConnection.DatabaseEngine engine;
+        if (sqliteRadio.isSelected()) {
+            engine = DatabaseConnection.DatabaseEngine.SQLITE;
+        } else if (mongodbRadio.isSelected()) {
+            engine = DatabaseConnection.DatabaseEngine.MONGODB;
+        } else {
+            engine = DatabaseConnection.DatabaseEngine.MYSQL;
+        }
 
         try {
             DatabaseConnection.setEngine(engine);
@@ -59,5 +67,3 @@ public class DbSelectorController {
         }
     }
 }
-
-

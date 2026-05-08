@@ -34,6 +34,11 @@
                              text="SQLite"
                              toggleGroup="$dbToggleGroup"
                              style="-fx-text-fill: #2C3E50; -fx-font-size: 14px;"/>
+
+                <RadioButton fx:id="mongodbRadio"
+                             text="MongoDB"
+                             toggleGroup="$dbToggleGroup"
+                             style="-fx-text-fill: #2C3E50; -fx-font-size: 14px;"/>
             </VBox>
 
             <Button text="Continuar"
@@ -49,5 +54,3 @@
     </center>
 
 </BorderPane>
-
-
