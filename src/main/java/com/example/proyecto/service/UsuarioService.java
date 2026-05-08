@@ -4,6 +4,7 @@ import com.example.proyecto.model.Usuario;
 import com.example.proyecto.util.DatabaseConnection;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bson.Document;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,84 +42,113 @@ public class UsuarioService {
 
     // Métodos para trabajar con BD
     private void guardarEnBD(List<Usuario> usuarios) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
+        if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
             for (Usuario u : usuarios) {
-                if (u.getId() == 0) {
-                    // Insertar nuevo
-                    String sql = "INSERT INTO usuarios (documento, nombre, edad, sexo, peso, altura, objetivo, calorias, tipo_membresia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                    try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                        stmt.setString(1, u.getDocumento());
-                        stmt.setString(2, u.getNombre());
-                        stmt.setInt(3, u.getEdad());
-                        stmt.setString(4, u.getSexo());
-                        stmt.setDouble(5, u.getPeso());
-                        stmt.setDouble(6, u.getAltura());
-                        stmt.setString(7, u.getObjetivo());
-                        stmt.setDouble(8, u.getCalorias());
-                        stmt.setString(9, u.getTipoMembresia());
-                        stmt.executeUpdate();
-                    }
-                } else {
-                    // Actualizar existente
-                    String sql = "UPDATE usuarios SET nombre = ?, edad = ?, sexo = ?, peso = ?, altura = ?, objetivo = ?, calorias = ?, tipo_membresia = ? WHERE id = ?";
-                    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                        stmt.setString(1, u.getNombre());
-                        stmt.setInt(2, u.getEdad());
-                        stmt.setString(3, u.getSexo());
-                        stmt.setDouble(4, u.getPeso());
-                        stmt.setDouble(5, u.getAltura());
-                        stmt.setString(6, u.getObjetivo());
-                        stmt.setDouble(7, u.getCalorias());
-                        stmt.setString(8, u.getTipoMembresia());
-                        stmt.setInt(9, u.getId());
-                        stmt.executeUpdate();
+                MongoDBService.insertarUsuario(u.getNombre(), u.getEdad(), u.getPeso(), u.getAltura(), u.getObjetivo(), u.getCalorias(), u.getSexo(), u.getDocumento());
+            }
+        } else {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                for (Usuario u : usuarios) {
+                    if (u.getId() == 0) {
+                        // Insertar nuevo
+                        String sql = "INSERT INTO usuarios (documento, nombre, edad, sexo, peso, altura, objetivo, calorias, tipo_membresia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                            stmt.setString(1, u.getDocumento());
+                            stmt.setString(2, u.getNombre());
+                            stmt.setInt(3, u.getEdad());
+                            stmt.setString(4, u.getSexo());
+                            stmt.setDouble(5, u.getPeso());
+                            stmt.setDouble(6, u.getAltura());
+                            stmt.setString(7, u.getObjetivo());
+                            stmt.setDouble(8, u.getCalorias());
+                            stmt.setString(9, u.getTipoMembresia());
+                            stmt.executeUpdate();
+                        }
+                    } else {
+                        // Actualizar existente
+                        String sql = "UPDATE usuarios SET nombre = ?, edad = ?, sexo = ?, peso = ?, altura = ?, objetivo = ?, calorias = ?, tipo_membresia = ? WHERE id = ?";
+                        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                            stmt.setString(1, u.getNombre());
+                            stmt.setInt(2, u.getEdad());
+                            stmt.setString(3, u.getSexo());
+                            stmt.setDouble(4, u.getPeso());
+                            stmt.setDouble(5, u.getAltura());
+                            stmt.setString(6, u.getObjetivo());
+                            stmt.setDouble(7, u.getCalorias());
+                            stmt.setString(8, u.getTipoMembresia());
+                            stmt.setInt(9, u.getId());
+                            stmt.executeUpdate();
+                        }
                     }
                 }
+                conn.commit();
+                System.out.println("✓ Datos guardados en BD correctamente");
+            } catch (SQLException e) {
+                System.out.println("✗ Error al guardar en BD: " + e.getMessage());
+                e.printStackTrace();
             }
-            conn.commit();
-            System.out.println("✓ Datos guardados en BD correctamente");
-        } catch (SQLException e) {
-            System.out.println("✗ Error al guardar en BD: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
     private List<Usuario> cargarDeBD() {
-        List<Usuario> usuarios = new ArrayList<>();
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            String sql = "SELECT id, documento, nombre, edad, sexo, peso, altura, objetivo, calorias, tipo_membresia FROM usuarios";
-            try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-                while (rs.next()) {
-                    Usuario u = new Usuario(
-                            rs.getInt("id"),
-                            rs.getString("nombre"),
-                            rs.getInt("edad"),
-                            rs.getDouble("peso"),
-                            rs.getDouble("altura"),
-                            rs.getString("objetivo"),
-                            rs.getDouble("calorias"),
-                            rs.getString("sexo"),
-                            rs.getString("documento"),
-                            false, // abandonado - se actualiza desde tabla abandonos
-                            rs.getString("tipo_membresia")
-                    );
-                    usuarios.add(u);
+        if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
+            List<Document> docs = MongoDBService.obtenerTodosUsuarios();
+            List<Usuario> usuarios = new ArrayList<>();
+            for (Document doc : docs) {
+                Usuario u = new Usuario(
+                    0, // id not used in MongoDB
+                    doc.getString("nombre"),
+                    doc.getInteger("edad", 0),
+                    doc.getDouble("peso", 0.0),
+                    doc.getDouble("altura", 0.0),
+                    doc.getString("objetivo"),
+                    doc.getDouble("calorias", 0.0),
+                    doc.getString("sexo"),
+                    doc.getString("documento"),
+                    doc.getBoolean("abandonado", false),
+                    doc.getString("tipoMembresia")
+                );
+                usuarios.add(u);
+            }
+            System.out.println("✓ Datos cargados desde MongoDB: " + usuarios.size() + " usuarios");
+            return usuarios;
+        } else {
+            List<Usuario> usuarios = new ArrayList<>();
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                String sql = "SELECT id, documento, nombre, edad, sexo, peso, altura, objetivo, calorias, tipo_membresia FROM usuarios";
+                try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+                    while (rs.next()) {
+                        Usuario u = new Usuario(
+                                rs.getInt("id"),
+                                rs.getString("nombre"),
+                                rs.getInt("edad"),
+                                rs.getDouble("peso"),
+                                rs.getDouble("altura"),
+                                rs.getString("objetivo"),
+                                rs.getDouble("calorias"),
+                                rs.getString("sexo"),
+                                rs.getString("documento"),
+                                false, // abandonado - se actualiza desde tabla abandonos
+                                rs.getString("tipo_membresia")
+                        );
+                        usuarios.add(u);
+                    }
+                }
+                System.out.println("✓ Datos cargados desde BD: " + usuarios.size() + " usuarios");
+            } catch (SQLException e) {
+                System.out.println("✗ Error al cargar desde BD: " + e.getMessage());
+                System.out.println("⚠ Intentando cargar desde JSON...");
+                try {
+                    if (ARCHIVO_DATOS.exists()) {
+                        usuarios = mapper.readValue(ARCHIVO_DATOS, new TypeReference<List<Usuario>>() {});
+                        usarBD = false; // Cambiar a JSON si BD no está disponible
+                    }
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
                 }
             }
-            System.out.println("✓ Datos cargados desde BD: " + usuarios.size() + " usuarios");
-        } catch (SQLException e) {
-            System.out.println("✗ Error al cargar desde BD: " + e.getMessage());
-            System.out.println("⚠ Intentando cargar desde JSON...");
-            try {
-                if (ARCHIVO_DATOS.exists()) {
-                    usuarios = mapper.readValue(ARCHIVO_DATOS, new TypeReference<List<Usuario>>() {});
-                    usarBD = false; // Cambiar a JSON si BD no está disponible
-                }
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+            return usuarios;
         }
-        return usuarios;
     }
 
     public void eliminarUsuario(int usuarioId) {

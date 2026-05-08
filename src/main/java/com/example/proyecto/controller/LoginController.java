@@ -30,30 +30,27 @@ public class LoginController {
 
     @FXML
     private void iniciarSesion() {
-        String username = usernameField.getText().trim();
+        String documento = usernameField.getText().trim();
         String password = passwordField.getText().trim();
 
-        if (username.isEmpty() || password.isEmpty()) {
-            errorLabel.setText("Por favor ingresa usuario y contraseña.");
+        if (documento.isEmpty() || password.isEmpty()) {
+            errorLabel.setText("Por favor ingresa documento y contraseña.");
             return;
         }
 
         // Verificar admin hardcodeado
-        if (username.equals("admin") && password.equals("1234")) {
+        if (documento.equals("admin") && password.equals("1234")) {
             abrirPantalla("/com/example/proyecto/GestionUsuarios.fxml", "admin", null);
             return;
         }
 
-        // Verificar usuario en JSON
-        CuentaUsuario cuenta = cuentaService.buscarCuenta(username, password);
+        // Verificar usuario en JSON (búsqueda por documento que es el username)
+        CuentaUsuario cuenta = cuentaService.buscarCuenta(documento, password);
         if (cuenta != null) {
             if (cuenta.getRol().equals("usuario")) {
                 // Validar membresía activa para usuarios
                 try {
-                    Usuario usuario = usuarioService.cargar().stream()
-                        .filter(u -> username.equals(u.getDocumento()))
-                        .findFirst()
-                        .orElse(null);
+                    Usuario usuario = usuarioService.obtenerPorDocumento(documento);
 
                     if (usuario != null) {
                         List<Membresia> membresiasActivas = membresiaService.obtenerMembresiasActivasDelUsuario(usuario.getId());
@@ -67,9 +64,9 @@ public class LoginController {
                     return;
                 }
             }
-            abrirPantalla("/com/example/proyecto/GestionUsuarios.fxml", cuenta.getRol(), cuenta.getUsername());
+            abrirPantalla("/com/example/proyecto/VistaUsuario.fxml", cuenta.getRol(), documento);
         } else {
-            errorLabel.setText("Usuario o contraseña incorrectos.");
+            errorLabel.setText("Documento o contraseña incorrectos.");
         }
     }
     @FXML
@@ -113,7 +110,7 @@ public class LoginController {
                 stage.setMaximized(true);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("✗ Error al abrir el sistema: " + e.getMessage());
             errorLabel.setText("Error al abrir el sistema: " + e.getMessage());
         }
 

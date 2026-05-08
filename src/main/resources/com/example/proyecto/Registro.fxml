@@ -20,11 +20,6 @@
             <Label text="Crear Cuenta"
                    style="-fx-font-size: 16px; -fx-text-fill: #2C3E50;"/>
 
-            <VBox spacing="8">
-                <Label text="Usuario:" style="-fx-text-fill: #2C3E50; -fx-font-weight: bold;"/>
-                <TextField fx:id="usernameField" promptText="Elige un nombre de usuario"
-                           style="-fx-background-radius: 10; -fx-pref-height: 35;"/>
-            </VBox>
 
             <VBox spacing="8">
                 <Label text="Documento:" style="-fx-text-fill: #2C3E50; -fx-font-weight: bold;"/>

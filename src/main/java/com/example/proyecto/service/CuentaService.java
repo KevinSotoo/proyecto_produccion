@@ -3,11 +3,13 @@ package com.example.proyecto.service;
 import com.example.proyecto.util.DatabaseConnection;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bson.Document;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +32,48 @@ public class CuentaService {
     }
 
     public CuentaUsuario buscarCuenta(String username, String password) {
+        if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
+            Document doc = MongoDBService.obtenerCuentaPorUsername(username);
+            if (doc != null && password.equals(doc.getString("password"))) {
+                CuentaUsuario cuenta = new CuentaUsuario();
+                cuenta.setUsername(doc.getString("username"));
+                cuenta.setPassword(doc.getString("password"));
+                cuenta.setRol(doc.getString("rol"));
+                return cuenta;
+            }
+            return null;
+        } else {
+            // Primero intenta buscar en BD
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                String sql = "SELECT username, password, rol FROM cuentas WHERE username = ? AND password = ? LIMIT 1";
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setString(1, username);
+                    stmt.setString(2, password);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            CuentaUsuario cuenta = new CuentaUsuario();
+                            cuenta.setUsername(rs.getString("username"));
+                            cuenta.setPassword(rs.getString("password"));
+                            cuenta.setRol(rs.getString("rol"));
+                            return cuenta;
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                System.err.println("✗ Error al buscar cuenta en BD: " + e.getMessage());
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Busca una cuenta por documento (username será igual al documento)
+     */
+    public CuentaUsuario buscarCuentaPorDocumento(String documento) {
         try {
             List<CuentaUsuario> cuentas = cargarCuentas();
             return cuentas.stream()
-                    .filter(c -> c.getUsername().equals(username) && c.getPassword().equals(password))
+                    .filter(c -> c.getUsername().equals(documento))
                     .findFirst()
                     .orElse(null);
         } catch (IOException e) {
@@ -86,18 +126,22 @@ public class CuentaService {
      * Se usa en el registro de nuevos usuarios
      */
     public void guardarCuentaConUsuario(String username, String password, String documento) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            String sql = "INSERT INTO cuentas (username, password, rol, usuario_id) " +
-                    "VALUES (?, ?, 'usuario', (SELECT id FROM usuarios WHERE documento = ? LIMIT 1))";
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, username);
-                stmt.setString(2, password);
-                stmt.setString(3, documento);
-                stmt.executeUpdate();
-                System.out.println("✓ Cuenta " + username + " guardada correctamente para usuario con documento " + documento);
+        if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
+            MongoDBService.insertarCuenta(username, password, "usuario");
+        } else {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                String sql = "INSERT INTO cuentas (username, password, rol, usuario_id) " +
+                        "VALUES (?, ?, 'usuario', (SELECT id FROM usuarios WHERE documento = ? LIMIT 1))";
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setString(1, username);
+                    stmt.setString(2, password);
+                    stmt.setString(3, documento);
+                    stmt.executeUpdate();
+                    System.out.println("✓ Cuenta " + username + " guardada correctamente para usuario con documento " + documento);
+                }
+            } catch (SQLException e) {
+                System.err.println("✗ Error al guardar cuenta: " + e.getMessage());
             }
-        } catch (SQLException e) {
-            System.err.println("✗ Error al guardar cuenta: " + e.getMessage());
         }
     }
 }

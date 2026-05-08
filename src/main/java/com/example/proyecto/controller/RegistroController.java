@@ -4,6 +4,8 @@ import com.example.proyecto.Main;
 import com.example.proyecto.service.CuentaUsuario;
 import com.example.proyecto.service.CuentaService;
 import com.example.proyecto.service.UsuarioService;
+import com.example.proyecto.service.MembresiaService;
+import com.example.proyecto.model.Membresia;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,11 +15,12 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Random;
 
 public class RegistroController {
 
-    @FXML private TextField usernameField;
     @FXML private TextField documentoField;
     @FXML private PasswordField passwordField;
     @FXML private PasswordField confirmarPasswordField;
@@ -25,16 +28,16 @@ public class RegistroController {
 
     private final CuentaService cuentaService = new CuentaService();
     private final UsuarioService usuarioService = new UsuarioService();
+    private final MembresiaService membresiaService = new MembresiaService();
 
     @FXML
     private void registrar() {
-        String username = usernameField.getText().trim();
         String documento = documentoField.getText().trim();
         String password = passwordField.getText().trim();
         String confirmar = confirmarPasswordField.getText().trim();
 
         // Validaciones
-        if (username.isEmpty() || documento.isEmpty() || password.isEmpty() || confirmar.isEmpty()) {
+        if (documento.isEmpty() || password.isEmpty() || confirmar.isEmpty()) {
             mostrarError("Por favor completa todos los campos.");
             return;
         }
@@ -56,24 +59,27 @@ public class RegistroController {
             return;
         }
 
-        // Verificar que el username no exista ya
         try {
-            List<CuentaUsuario> cuentas = cuentaService.cargarCuentas();
-            boolean existe = cuentas.stream()
-                    .anyMatch(c -> c.getUsername().equalsIgnoreCase(username));
-
-            if (existe || username.equalsIgnoreCase("admin")) {
-                mostrarError("Ese nombre de usuario ya está en uso.");
+            // ✅ Verificar que la cuenta no exista ya
+            CuentaUsuario cuentaExistente = cuentaService.buscarCuentaPorDocumento(documento);
+            if (cuentaExistente != null) {
+                mostrarError("Este documento ya tiene una cuenta registrada.");
                 return;
             }
 
-            // ✅ CAMBIO: Ahora crea la cuenta en BD con el usuario_id asociado
-            cuentaService.guardarCuentaConUsuario(username, password, documento);
+            // ✅ Guardar la cuenta con el documento como username
+            cuentaService.guardarCuentaConUsuario(documento, password, documento);
+
+            // Crear membresía automáticamente con duración variable
+            Random random = new Random();
+            int dias = (random.nextInt(3) + 1) * 30; // 30, 60 o 90 días
+            Membresia membresia = new Membresia(0, usuarioId, "Básica", LocalDate.now(), LocalDate.now().plusDays(dias), 100.0, "activa", LocalDateTime.now().toString());
+            membresiaService.guardar(membresia);
 
             mostrarExito("¡Cuenta creada exitosamente! Ya puedes iniciar sesión.");
             limpiarCampos();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             mostrarError("Error al registrar: " + e.getMessage());
         }
     }
@@ -85,7 +91,7 @@ public class RegistroController {
                     Main.class.getResource("/com/example/proyecto/Login.fxml")
             );
             Scene scene = new Scene(loader.load());
-            Stage stage = (Stage) usernameField.getScene().getWindow();
+            Stage stage = (Stage) documentoField.getScene().getWindow();
             stage.setScene(scene);
         } catch (IOException e) {
             mostrarError("Error al volver al login: " + e.getMessage());
@@ -103,7 +109,6 @@ public class RegistroController {
     }
 
     private void limpiarCampos() {
-        usernameField.clear();
         documentoField.clear();
         passwordField.clear();
         confirmarPasswordField.clear();

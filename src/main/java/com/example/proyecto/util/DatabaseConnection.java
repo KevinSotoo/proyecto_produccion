@@ -51,7 +51,7 @@ public class DatabaseConnection {
             url = getPropertyOrDefault("mongodb.url", "mongodb://localhost:27017/gym_db");
             user = getPropertyOrDefault("mongodb.user", "admin");
             password = getPropertyOrDefault("mongodb.password", "admin");
-            Class.forName("org.mongodb.Driver");
+            // MongoDB no usa JDBC, se maneja directamente en MongoDBService
             System.out.println("Motor de BD seleccionado: MONGODB");
             return;
         }
@@ -83,6 +83,9 @@ public class DatabaseConnection {
     }
 
     public static Connection getConnection() throws SQLException {
+        if (currentEngine == DatabaseEngine.MONGODB) {
+            throw new SQLException("MongoDB no utiliza conexiones JDBC. Utiliza MongoDBService para operaciones con MongoDB.");
+        }
         try {
             Connection conn;
             if (currentEngine == DatabaseEngine.SQLITE) {

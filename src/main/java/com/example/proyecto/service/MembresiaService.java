@@ -36,19 +36,23 @@ public class MembresiaService {
     }
 
     public void guardar(Membresia m) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            String sql = "INSERT INTO membresias (usuario_id, tipo_membresia, fecha_inicio, fecha_vencimiento, precio, estado) VALUES (?, ?, ?, ?, ?, ?)";
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setInt(1, m.getUsuarioId());
-                stmt.setString(2, m.getTipoMembresia());
-                stmt.setDate(3, Date.valueOf(m.getFechaInicio()));
-                stmt.setDate(4, Date.valueOf(m.getFechaVencimiento()));
-                stmt.setDouble(5, m.getPrecio());
-                stmt.setString(6, m.getEstado());
-                stmt.executeUpdate();
+        if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
+            MongoDBService.insertarMembresia(m.getUsuarioId() + "", m.getTipoMembresia(), m.getFechaInicio(), m.getFechaVencimiento());
+        } else {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                String sql = "INSERT INTO membresias (usuario_id, tipo_membresia, fecha_inicio, fecha_vencimiento, precio, estado) VALUES (?, ?, ?, ?, ?, ?)";
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setInt(1, m.getUsuarioId());
+                    stmt.setString(2, m.getTipoMembresia());
+                    stmt.setDate(3, Date.valueOf(m.getFechaInicio()));
+                    stmt.setDate(4, Date.valueOf(m.getFechaVencimiento()));
+                    stmt.setDouble(5, m.getPrecio());
+                    stmt.setString(6, m.getEstado());
+                    stmt.executeUpdate();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
@@ -111,39 +115,62 @@ public class MembresiaService {
      * @return Lista de membresías activas
      */
     public List<Membresia> obtenerMembresiasActivasDelUsuario(int usuarioId) {
-        List<Membresia> membresiasActivas = new ArrayList<>();
-        LocalDate hoyServidor = TimeService.obtenerFechaDelServidor();
+        if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
+            List<Membresia> membresiasActivas = new ArrayList<>();
+            LocalDate hoyServidor = TimeService.obtenerFechaDelServidor();
+            Document doc = MongoDBService.obtenerMembresiaPorDocumento(usuarioId + "");
+            if (doc != null) {
+                LocalDate fechaVencimiento = LocalDate.parse(doc.getString("fechaVencimiento"));
+                if (fechaVencimiento.isAfter(hoyServidor) || fechaVencimiento.isEqual(hoyServidor)) {
+                    Membresia m = new Membresia(
+                        0, // id not used
+                        usuarioId,
+                        doc.getString("tipo"),
+                        LocalDate.parse(doc.getString("fechaInicio")),
+                        fechaVencimiento,
+                        100.0, // precio not stored
+                        doc.getString("estado"),
+                        "" // fechaRegistro not stored
+                    );
+                    membresiasActivas.add(m);
+                }
+            }
+            return membresiasActivas;
+        } else {
+            List<Membresia> membresiasActivas = new ArrayList<>();
+            LocalDate hoyServidor = TimeService.obtenerFechaDelServidor();
 
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            String sql = "SELECT * FROM membresias WHERE usuario_id=?";
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setInt(1, usuarioId);
-                try (ResultSet rs = stmt.executeQuery()) {
-                    while (rs.next()) {
-                        LocalDate fechaVencimiento = rs.getDate("fecha_vencimiento").toLocalDate();
-                        // Solo agregar si la membresía no está vencida
-                        if (fechaVencimiento.isAfter(hoyServidor) || fechaVencimiento.isEqual(hoyServidor)) {
-                            Membresia m = new Membresia(
-                                rs.getInt("id"),
-                                rs.getInt("usuario_id"),
-                                rs.getString("tipo_membresia"),
-                                rs.getDate("fecha_inicio").toLocalDate(),
-                                fechaVencimiento,
-                                rs.getDouble("precio"),
-                                rs.getString("estado"),
-                                rs.getString("fecha_registro")
-                            );
-                            membresiasActivas.add(m);
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                String sql = "SELECT * FROM membresias WHERE usuario_id=?";
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setInt(1, usuarioId);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        while (rs.next()) {
+                            LocalDate fechaVencimiento = rs.getDate("fecha_vencimiento").toLocalDate();
+                            // Solo agregar si la membresía no está vencida
+                            if (fechaVencimiento.isAfter(hoyServidor) || fechaVencimiento.isEqual(hoyServidor)) {
+                                Membresia m = new Membresia(
+                                    rs.getInt("id"),
+                                    rs.getInt("usuario_id"),
+                                    rs.getString("tipo_membresia"),
+                                    rs.getDate("fecha_inicio").toLocalDate(),
+                                    fechaVencimiento,
+                                    rs.getDouble("precio"),
+                                    rs.getString("estado"),
+                                    rs.getString("fecha_registro")
+                                );
+                                membresiasActivas.add(m);
+                            }
                         }
                     }
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            return membresiasActivas;
         }
-        return membresiasActivas;
     }
 
     /**
