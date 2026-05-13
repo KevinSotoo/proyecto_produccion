@@ -4,6 +4,8 @@ import com.example.proyecto.util.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * Herramienta para verificar que los datos se están insertando correctamente en MySQL
@@ -12,6 +14,7 @@ import java.sql.Statement;
  * java -cp target/classes:target/dependency/* com.example.proyecto.VerificadorDatos
  */
 public class VerificadorDatos {
+    private static final Logger logger = Logger.getLogger(VerificadorDatos.class.getName());
 
     public static void main(String[] args) {
         System.out.println("\n════════════════════════════════════════════════════════");
@@ -30,7 +33,7 @@ public class VerificadorDatos {
 
         } catch (Exception e) {
             System.err.println("❌ Error: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error en verificador de datos", e);
         }
 
         System.out.println("\n════════════════════════════════════════════════════════\n");
@@ -102,7 +105,7 @@ public class VerificadorDatos {
 
         } catch (Exception e) {
             System.err.println("❌ Error al verificar datos: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error al verificar datos", e);
         }
     }
 

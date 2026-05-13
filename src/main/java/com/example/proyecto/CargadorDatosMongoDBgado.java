@@ -55,17 +55,17 @@ public class CargadorDatosMongoDBgado {
     private static void cargarDatosUsuarios() {
         try {
             File file = new File(DATA_PATH + "gimnasio_usuarios.json");
-            List<Map<String, Object>> usuarios = objectMapper.readValue(file, List.class);
+            List<Map<String, Object>> usuarios = obtenerListaMapas(file);
             
             System.out.println("Insertando " + usuarios.size() + " usuarios...");
             
             for (Map<String, Object> usuario : usuarios) {
                 String nombre = (String) usuario.get("nombre");
                 Integer edad = (Integer) usuario.get("edad");
-                Double peso = ((Number) usuario.get("peso")).doubleValue();
-                Double altura = ((Number) usuario.get("altura")).doubleValue();
+                double peso = ((Number) usuario.get("peso")).doubleValue();
+                double altura = ((Number) usuario.get("altura")).doubleValue();
                 String objetivo = (String) usuario.get("objetivo");
-                Double calorias = ((Number) usuario.get("calorias")).doubleValue();
+                double calorias = ((Number) usuario.get("calorias")).doubleValue();
                 String sexo = (String) usuario.get("sexo");
                 String documento = (String) usuario.get("documento");
                 
@@ -84,7 +84,7 @@ public class CargadorDatosMongoDBgado {
     private static void cargarDatosCuentas() {
         try {
             File file = new File(DATA_PATH + "cuentas.json");
-            List<Map<String, Object>> cuentas = objectMapper.readValue(file, List.class);
+            List<Map<String, Object>> cuentas = obtenerListaMapas(file);
             
             System.out.println("Insertando " + cuentas.size() + " cuentas...");
             
@@ -108,7 +108,7 @@ public class CargadorDatosMongoDBgado {
     private static void cargarDatosAbandonos() {
         try {
             File file = new File(DATA_PATH + "abandonos.json");
-            List<Map<String, Object>> abandonos = objectMapper.readValue(file, List.class);
+            List<Map<String, Object>> abandonos = obtenerListaMapas(file);
             
             System.out.println("Insertando " + abandonos.size() + " abandonos...");
             
@@ -135,7 +135,7 @@ public class CargadorDatosMongoDBgado {
     private static void cargarDatosMembresias() {
         try {
             File file = new File(DATA_PATH + "membresias.json");
-            List<Map<String, Object>> membresias = objectMapper.readValue(file, List.class);
+            List<Map<String, Object>> membresias = obtenerListaMapas(file);
             
             System.out.println("Insertando " + membresias.size() + " membresías...");
             
@@ -157,6 +157,11 @@ public class CargadorDatosMongoDBgado {
         } catch (Exception e) {
             System.err.println("✗ Error al cargar membresías: " + e.getMessage() + "\n");
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<Map<String, Object>> obtenerListaMapas(File file) throws Exception {
+        return objectMapper.readValue(file, List.class);
     }
 }
 

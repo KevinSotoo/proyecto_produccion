@@ -2,14 +2,21 @@ package com.example.proyecto.service;
 
 import com.example.proyecto.model.Membresia;
 import com.example.proyecto.util.DatabaseConnection;
+import org.bson.Document;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class MembresiaService {
+    private static final Logger logger = Logger.getLogger(MembresiaService.class.getName());
+    
+    // ...existing code...
+    
     public List<Membresia> cargar() {
         List<Membresia> membresias = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection()) {
@@ -30,7 +37,7 @@ public class MembresiaService {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error al cargar membresías", e);
         }
         return membresias;
     }
@@ -51,7 +58,7 @@ public class MembresiaService {
                     stmt.executeUpdate();
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "Error al guardar membresía", e);
             }
         }
     }
@@ -69,7 +76,7 @@ public class MembresiaService {
                 stmt.executeUpdate();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error al actualizar membresía", e);
         }
     }
 
@@ -81,7 +88,7 @@ public class MembresiaService {
                 stmt.executeUpdate();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error al eliminar membresía", e);
         }
     }
 
@@ -104,7 +111,7 @@ public class MembresiaService {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error al validar membresía activa", e);
         }
         return false;
     }
@@ -164,10 +171,10 @@ public class MembresiaService {
                         }
                     }
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    logger.log(Level.SEVERE, "Error al obtener membresías activas", e);
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "Error al conectar a base de datos", e);
             }
             return membresiasActivas;
         }

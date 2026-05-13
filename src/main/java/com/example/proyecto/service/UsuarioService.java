@@ -12,10 +12,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class UsuarioService {
-
+    private static final Logger logger = Logger.getLogger(UsuarioService.class.getName());
     private static final File ARCHIVO_DATOS = new File(
             System.getProperty("user.dir") + "/data/gimnasio_usuarios.json"
     );
@@ -26,7 +28,9 @@ public class UsuarioService {
         if (usarBD) {
             guardarEnBD(usuarios);
         } else {
-            ARCHIVO_DATOS.getParentFile().mkdirs();
+            if (!ARCHIVO_DATOS.getParentFile().mkdirs() && !ARCHIVO_DATOS.getParentFile().exists()) {
+                throw new IOException("No se pudo crear el directorio");
+            }
             mapper.writerWithDefaultPrettyPrinter().writeValue(ARCHIVO_DATOS, usuarios);
         }
     }
@@ -36,7 +40,7 @@ public class UsuarioService {
             return cargarDeBD();
         } else {
             if (!ARCHIVO_DATOS.exists()) return new ArrayList<>();
-            return mapper.readValue(ARCHIVO_DATOS, new TypeReference<List<Usuario>>() {});
+            return mapper.readValue(ARCHIVO_DATOS, new TypeReference<>() {});
         }
     }
 
@@ -85,7 +89,7 @@ public class UsuarioService {
                 System.out.println("✓ Datos guardados en BD correctamente");
             } catch (SQLException e) {
                 System.out.println("✗ Error al guardar en BD: " + e.getMessage());
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "Error al guardar en BD", e);
             }
         }
     }
@@ -98,14 +102,14 @@ public class UsuarioService {
                 Usuario u = new Usuario(
                     0, // id not used in MongoDB
                     doc.getString("nombre"),
-                    doc.getInteger("edad", 0),
-                    doc.getDouble("peso", 0.0),
-                    doc.getDouble("altura", 0.0),
+                    doc.getInteger("edad"),
+                    doc.getDouble("peso"),
+                    doc.getDouble("altura"),
                     doc.getString("objetivo"),
-                    doc.getDouble("calorias", 0.0),
+                    doc.getDouble("calorias"),
                     doc.getString("sexo"),
                     doc.getString("documento"),
-                    doc.getBoolean("abandonado", false),
+                    doc.getBoolean("abandonado"),
                     doc.getString("tipoMembresia")
                 );
                 usuarios.add(u);
@@ -140,11 +144,11 @@ public class UsuarioService {
                 System.out.println("⚠ Intentando cargar desde JSON...");
                 try {
                     if (ARCHIVO_DATOS.exists()) {
-                        usuarios = mapper.readValue(ARCHIVO_DATOS, new TypeReference<List<Usuario>>() {});
+                        usuarios = mapper.readValue(ARCHIVO_DATOS, new TypeReference<>() {});
                         usarBD = false; // Cambiar a JSON si BD no está disponible
                     }
                 } catch (IOException ioException) {
-                    ioException.printStackTrace();
+                    logger.log(Level.SEVERE, "Error al cargar desde JSON", ioException);
                 }
             }
             return usuarios;
@@ -177,11 +181,11 @@ public class UsuarioService {
 
         double factor;
         switch (actividad) {
-            case "Ligero":      factor = 1.375; break;
-            case "Moderado":    factor = 1.55;  break;
-            case "Intenso":     factor = 1.725; break;
-            case "Muy intenso": factor = 1.9;   break;
-            default:            factor = 1.2;
+            case "Ligero" -> factor = 1.375;
+            case "Moderado" -> factor = 1.55;
+            case "Intenso" -> factor = 1.725;
+            case "Muy intenso" -> factor = 1.9;
+            default -> factor = 1.2;
         }
 
         double calorias = tmb * factor;
@@ -230,32 +234,52 @@ public class UsuarioService {
      * Guarda un único usuario
      */
     public Usuario obtenerPorDocumento(String documento) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            String sql = "SELECT id, documento, nombre, edad, sexo, peso, altura, objetivo, calorias, tipo_membresia FROM usuarios WHERE documento = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, documento);
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return new Usuario(
-                                rs.getInt("id"),
-                                rs.getString("nombre"),
-                                rs.getInt("edad"),
-                                rs.getDouble("peso"),
-                                rs.getDouble("altura"),
-                                rs.getString("objetivo"),
-                                rs.getDouble("calorias"),
-                                rs.getString("sexo"),
-                                rs.getString("documento"),
-                                false, // abandonado - se actualiza desde tabla abandonos
-                                rs.getString("tipo_membresia")
-                        );
+        if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
+            Document doc = MongoDBService.obtenerUsuarioPorDocumento(documento);
+            if (doc != null) {
+                return new Usuario(
+                    0, // id not used in MongoDB
+                    doc.getString("nombre"),
+                    doc.getInteger("edad"),
+                    doc.getDouble("peso"),
+                    doc.getDouble("altura"),
+                    doc.getString("objetivo"),
+                    doc.getDouble("calorias"),
+                    doc.getString("sexo"),
+                    doc.getString("documento"),
+                    doc.getBoolean("abandonado") != null ? doc.getBoolean("abandonado") : false,
+                    doc.getString("tipoMembresia")
+                );
+            }
+            return null;
+        } else {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                String sql = "SELECT id, documento, nombre, edad, sexo, peso, altura, objetivo, calorias, tipo_membresia FROM usuarios WHERE documento = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setString(1, documento);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            return new Usuario(
+                                    rs.getInt("id"),
+                                    rs.getString("nombre"),
+                                    rs.getInt("edad"),
+                                    rs.getDouble("peso"),
+                                    rs.getDouble("altura"),
+                                    rs.getString("objetivo"),
+                                    rs.getDouble("calorias"),
+                                    rs.getString("sexo"),
+                                    rs.getString("documento"),
+                                    false, // abandonado - se actualiza desde tabla abandonos
+                                    rs.getString("tipo_membresia")
+                            );
+                        }
                     }
                 }
+            } catch (SQLException e) {
+                System.err.println("✗ Error al obtener usuario por documento: " + e.getMessage());
             }
-        } catch (SQLException e) {
-            System.err.println("✗ Error al obtener usuario por documento: " + e.getMessage());
+            return null;
         }
-        return null;
     }
 
     /**
