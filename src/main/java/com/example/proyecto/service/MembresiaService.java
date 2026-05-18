@@ -3,6 +3,7 @@ package com.example.proyecto.service;
 import com.example.proyecto.model.Membresia;
 import com.example.proyecto.util.DatabaseConnection;
 import org.bson.Document;
+import com.mongodb.client.MongoCollection;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -191,6 +192,35 @@ public class MembresiaService {
             return "Hora del servidor: " + horaServidor + " (" + zonaHoraria + ")";
         } catch (Exception e) {
             return "Error al conectar con el servidor de tiempo";
+        }
+    }
+
+    /**
+     * Renueva todas las membresías para que estén activas (30 días desde hoy)
+     */
+    public void renovarTodasLasMembresias() {
+        LocalDate hoyServidor = TimeService.obtenerFechaDelServidor();
+        LocalDate nuevaFechaVencimiento = hoyServidor.plusDays(30);
+        if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
+            try {
+                MongoCollection<Document> collection = MongoDBService.getDatabase().getCollection("membresias");
+                Document actualizacion = new Document("$set", new Document("fechaVencimiento", nuevaFechaVencimiento.toString()).append("estado", "activa"));
+                collection.updateMany(new Document(), actualizacion);
+                System.out.println("✓ Todas las membresías en MongoDB renovadas hasta " + nuevaFechaVencimiento);
+            } catch (Exception e) {
+                System.err.println("✗ Error al renovar membresías en MongoDB: " + e.getMessage());
+            }
+        } else {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                String sql = "UPDATE membresias SET fecha_vencimiento = ?, estado = 'activa'";
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setDate(1, Date.valueOf(nuevaFechaVencimiento));
+                    int filasActualizadas = stmt.executeUpdate();
+                    System.out.println("✓ " + filasActualizadas + " membresías renovadas hasta " + nuevaFechaVencimiento);
+                }
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "Error al renovar membresías", e);
+            }
         }
     }
 }

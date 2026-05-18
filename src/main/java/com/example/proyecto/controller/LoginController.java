@@ -38,6 +38,13 @@ public class LoginController {
             return;
         }
 
+        // Renovar membresías antes de validar
+        try {
+            membresiaService.renovarTodasLasMembresias();
+        } catch (Exception e) {
+            System.out.println("⚠ Advertencia al renovar membresías: " + e.getMessage());
+        }
+
         // Verificar admin hardcodeado
         if (documento.equals("admin") && password.equals("1234")) {
             abrirPantalla("/com/example/proyecto/GestionUsuarios.fxml", "admin", null);

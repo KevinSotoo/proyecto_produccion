@@ -1,6 +1,7 @@
 package com.example.proyecto.controller;
 
 import com.example.proyecto.Main;
+import com.example.proyecto.service.MembresiaService;
 import com.example.proyecto.util.DatabaseConnection;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -48,6 +49,15 @@ public class DbSelectorController {
         try {
             DatabaseConnection.setEngine(engine);
             DatabaseConnection.testConnection();
+
+            // Renovar membresías para la BD seleccionada
+            try {
+                MembresiaService membresiaService = new MembresiaService();
+                membresiaService.renovarTodasLasMembresias();
+            } catch (Exception e) {
+                System.out.println("⚠ Advertencia al renovar membresías: " + e.getMessage());
+            }
+
             abrirLogin();
         } catch (IllegalStateException e) {
             errorLabel.setText("No se pudo cargar el driver: " + e.getMessage());

@@ -221,6 +221,29 @@ public class MongoDBService {
     }
 
     /**
+     * Inserta cuenta admin si no existe
+     */
+    public static void insertarCuentaAdminSiNoExiste() {
+        try {
+            MongoCollection<Document> collection = database.getCollection("cuentas");
+            Document adminDoc = collection.find(Filters.eq("username", "admin")).first();
+            if (adminDoc == null) {
+                Document cuenta = new Document()
+                        .append("username", "admin")
+                        .append("password", "1234")
+                        .append("rol", "admin")
+                        .append("fechaCreacion", LocalDateTime.now().toString());
+                collection.insertOne(cuenta);
+                System.out.println("✓ Cuenta admin insertada en MongoDB");
+            } else {
+                System.out.println("✓ Cuenta admin ya existe en MongoDB");
+            }
+        } catch (Exception e) {
+            System.err.println("✗ Error al insertar cuenta admin: " + e.getMessage());
+        }
+    }
+
+    /**
      * Obtiene una cuenta por username
      */
     public static Document obtenerCuentaPorUsername(String username) {
