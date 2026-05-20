@@ -1,0 +1,336 @@
+[{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43ca96"
+  },
+  "documento": "1025528936",
+  "nombre": "Kevin",
+  "edad": 20,
+  "sexo": "Masculino",
+  "peso": 76,
+  "altura": 174,
+  "objetivo": "Ganar masa muscular",
+  "calorias": 2754,
+  "tipoMembresia": "Basica",
+  "abandonado": true,
+  "fechaCreacion": "2024-01-01"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43ca97"
+  },
+  "documento": "1938475620",
+  "nombre": "Daniel",
+  "edad": 22,
+  "sexo": "Masculino",
+  "peso": 65,
+  "altura": 180,
+  "objetivo": "Ganar masa muscular",
+  "calorias": 2404,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-02"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43ca98"
+  },
+  "documento": "5673829104",
+  "nombre": "Sebastian",
+  "edad": 19,
+  "sexo": "Masculino",
+  "peso": 50,
+  "altura": 184,
+  "objetivo": "Ganar masa muscular",
+  "calorias": 1917,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-03"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43ca99"
+  },
+  "documento": "9081726354",
+  "nombre": "Nicolas",
+  "edad": 21,
+  "sexo": "Masculino",
+  "peso": 71,
+  "altura": 174,
+  "objetivo": "Ganar masa muscular",
+  "calorias": 2776,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-04"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43ca9a"
+  },
+  "documento": "3748291056",
+  "nombre": "Andres",
+  "edad": 23,
+  "sexo": "Masculino",
+  "peso": 90,
+  "altura": 178,
+  "objetivo": "Perder grasa",
+  "calorias": 2541,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-05"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43ca9b"
+  },
+  "documento": "6519203847",
+  "nombre": "Camila",
+  "edad": 22,
+  "sexo": "Femenino",
+  "peso": 58,
+  "altura": 162,
+  "objetivo": "Mantener peso",
+  "calorias": 1980,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-06"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43ca9c"
+  },
+  "documento": "2847561930",
+  "nombre": "Valeria",
+  "edad": 20,
+  "sexo": "Femenino",
+  "peso": 52,
+  "altura": 158,
+  "objetivo": "Ganar masa muscular",
+  "calorias": 2150,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-07"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43ca9d"
+  },
+  "documento": "7192038456",
+  "nombre": "Miguel",
+  "edad": 25,
+  "sexo": "Masculino",
+  "peso": 78,
+  "altura": 176,
+  "objetivo": "Mantener peso",
+  "calorias": 2620,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-08"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43ca9e"
+  },
+  "documento": "4829105736",
+  "nombre": "Laura",
+  "edad": 19,
+  "sexo": "Femenino",
+  "peso": 61,
+  "altura": 165,
+  "objetivo": "Perder grasa",
+  "calorias": 1750,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-09"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43ca9f"
+  },
+  "documento": "9301758462",
+  "nombre": "Santiago",
+  "edad": 24,
+  "sexo": "Masculino",
+  "peso": 95,
+  "altura": 182,
+  "objetivo": "Perder grasa",
+  "calorias": 2890,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-10"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43caa0"
+  },
+  "documento": "2758491036",
+  "nombre": "Isabella",
+  "edad": 21,
+  "sexo": "Femenino",
+  "peso": 55,
+  "altura": 160,
+  "objetivo": "Mantener peso",
+  "calorias": 1870,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-11"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43caa1"
+  },
+  "documento": "8162039475",
+  "nombre": "Juan",
+  "edad": 28,
+  "sexo": "Masculino",
+  "peso": 82,
+  "altura": 179,
+  "objetivo": "Ganar masa muscular",
+  "calorias": 3100,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-12"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43caa2"
+  },
+  "documento": "5039182746",
+  "nombre": "Daniela",
+  "edad": 22,
+  "sexo": "Femenino",
+  "peso": 67,
+  "altura": 168,
+  "objetivo": "Perder grasa",
+  "calorias": 1920,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-13"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43caa3"
+  },
+  "documento": "6928471503",
+  "nombre": "Carlos",
+  "edad": 30,
+  "sexo": "Masculino",
+  "peso": 88,
+  "altura": 175,
+  "objetivo": "Mantener peso",
+  "calorias": 2710,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-14"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43caa4"
+  },
+  "documento": "1475938206",
+  "nombre": "Sofia",
+  "edad": 18,
+  "sexo": "Femenino",
+  "peso": 49,
+  "altura": 155,
+  "objetivo": "Ganar masa muscular",
+  "calorias": 2040,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-15"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43caa5"
+  },
+  "documento": "8745201936",
+  "nombre": "Mateo",
+  "edad": 26,
+  "sexo": "Masculino",
+  "peso": 73,
+  "altura": 177,
+  "objetivo": "Mantener peso",
+  "calorias": 2560,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-16"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43caa6"
+  },
+  "documento": "3910284756",
+  "nombre": "Alejandra",
+  "edad": 23,
+  "sexo": "Femenino",
+  "peso": 70,
+  "altura": 170,
+  "objetivo": "Perder grasa",
+  "calorias": 1830,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-17"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43caa7"
+  },
+  "documento": "6283749105",
+  "nombre": "Natalia",
+  "edad": 20,
+  "sexo": "Femenino",
+  "peso": 54,
+  "altura": 161,
+  "objetivo": "Mantener peso",
+  "calorias": 1790,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-18"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43caa8"
+  },
+  "documento": "9502847613",
+  "nombre": "Manuel",
+  "edad": 30,
+  "sexo": "Masculino",
+  "peso": 80,
+  "altura": 170,
+  "objetivo": "Perder grasa",
+  "calorias": 1661,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-19"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43caa9"
+  },
+  "documento": "2047591836",
+  "nombre": "Ana",
+  "edad": 22,
+  "sexo": "Femenino",
+  "peso": 57,
+  "altura": 160,
+  "objetivo": "Ganar masa muscular",
+  "calorias": 2186,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-20"
+},
+{
+  "_id": {
+    "$oid": "69fb7f2db39d37a34f43caaa"
+  },
+  "documento": "7639182504",
+  "nombre": "Luis",
+  "edad": 20,
+  "sexo": "Masculino",
+  "peso": 79,
+  "altura": 179,
+  "objetivo": "Ganar masa muscular",
+  "calorias": 3211,
+  "tipoMembresia": "Basica",
+  "abandonado": false,
+  "fechaCreacion": "2024-01-21"
+}]

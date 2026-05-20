@@ -1,0 +1,9 @@
+[{
+  "_id": {
+    "$oid": "69fb7f18b39d37a34f43ca78"
+  },
+  "documento": "1025528936",
+  "fechaAbandono": "2026-03-15",
+  "motivo": "Falta de tiempo disponible para asistir al gimnasio",
+  "fechaCreacion": "2026-03-15"
+}]

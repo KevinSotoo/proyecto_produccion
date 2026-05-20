@@ -1,0 +1,45 @@
+[{
+  "_id": {
+    "$oid": "69fb7f1fb39d37a34f43ca7a"
+  },
+  "username": "admin",
+  "password": "1234",
+  "rol": "admin",
+  "fechaCreacion": "2024-01-01"
+},
+{
+  "_id": {
+    "$oid": "69fb7f1fb39d37a34f43ca7b"
+  },
+  "username": "danielgamplays",
+  "password": "daniela",
+  "rol": "usuario",
+  "fechaCreacion": "2024-01-01"
+},
+{
+  "_id": {
+    "$oid": "69fb7f1fb39d37a34f43ca7c"
+  },
+  "username": "1025528936",
+  "password": "holahola",
+  "rol": "usuario",
+  "fechaCreacion": "2024-01-02"
+},
+{
+  "_id": {
+    "$oid": "69fb7f1fb39d37a34f43ca7d"
+  },
+  "username": "1938475620",
+  "password": "aloalo",
+  "rol": "usuario",
+  "fechaCreacion": "2024-01-03"
+},
+{
+  "_id": {
+    "$oid": "69fb7f1fb39d37a34f43ca7e"
+  },
+  "username": "5673829104",
+  "password": "1234",
+  "rol": "usuario",
+  "fechaCreacion": "2024-01-04"
+}]
