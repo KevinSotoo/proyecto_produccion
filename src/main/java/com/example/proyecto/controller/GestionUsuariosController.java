@@ -125,7 +125,7 @@ public class GestionUsuariosController {
                     Usuario usuario = getTableRow().getItem();
                     // Check membership status in background
                     new Thread(() -> {
-                        List<Membresia> membresiasActivas = membresiaService.obtenerMembresiasActivasDelUsuario(usuario.getId());
+                        List<Membresia> membresiasActivas = membresiaService.obtenerMembresiasActivasPorDocumento(usuario.getDocumento());
                         javafx.application.Platform.runLater(() -> {
                             if (!membresiasActivas.isEmpty()) {
                                 setText("✓ ACTIVA");

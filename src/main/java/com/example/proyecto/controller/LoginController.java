@@ -61,7 +61,7 @@ public class LoginController {
                     Usuario usuario = usuarioService.obtenerPorDocumento(documento);
 
                     if (usuario != null) {
-                        List<Membresia> membresiasActivas = membresiaService.obtenerMembresiasActivasDelUsuario(usuario.getId());
+                        List<Membresia> membresiasActivas = membresiaService.obtenerMembresiasActivasPorDocumento(usuario.getDocumento());
                         if (membresiasActivas.isEmpty()) {
                             errorLabel.setText("Tu membresía ha expirado. Contacta al administrador para renovarla.");
                             return;

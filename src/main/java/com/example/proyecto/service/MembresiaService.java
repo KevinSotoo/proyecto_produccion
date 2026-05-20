@@ -24,17 +24,21 @@ public class MembresiaService {
             String sql = "SELECT * FROM membresias";
             try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
                 while (rs.next()) {
-                    Membresia m = new Membresia(
-                        rs.getInt("id"),
-                        rs.getInt("usuario_id"),
-                        rs.getString("tipo_membresia"),
-                        rs.getDate("fecha_inicio").toLocalDate(),
-                        rs.getDate("fecha_vencimiento").toLocalDate(),
-                        rs.getDouble("precio"),
-                        rs.getString("estado"),
-                        rs.getString("fecha_registro")
-                    );
-                    membresias.add(m);
+                    try {
+                        Membresia m = new Membresia(
+                            rs.getInt("id"),
+                            rs.getInt("usuario_id"),
+                            rs.getString("tipo_membresia"),
+                            LocalDate.parse(rs.getString("fecha_inicio")),
+                            LocalDate.parse(rs.getString("fecha_vencimiento")),
+                            rs.getDouble("precio"),
+                            rs.getString("estado"),
+                            rs.getString("fecha_registro")
+                        );
+                        membresias.add(m);
+                    } catch (Exception dateEx) {
+                        logger.log(Level.SEVERE, "Error al parsear fechas de membresía: " + dateEx.getMessage());
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -105,9 +109,13 @@ public class MembresiaService {
                 stmt.setInt(1, membresiaId);
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        LocalDate fechaVencimiento = rs.getDate("fecha_vencimiento").toLocalDate();
-                        LocalDate hoyServidor = TimeService.obtenerFechaDelServidor();
-                        return fechaVencimiento.isAfter(hoyServidor) || fechaVencimiento.isEqual(hoyServidor);
+                        try {
+                            LocalDate fechaVencimiento = LocalDate.parse(rs.getString("fecha_vencimiento"));
+                            LocalDate hoyServidor = TimeService.obtenerFechaDelServidor();
+                            return fechaVencimiento.isAfter(hoyServidor) || fechaVencimiento.isEqual(hoyServidor);
+                        } catch (Exception dateEx) {
+                            logger.log(Level.SEVERE, "Error al parsear fecha: " + dateEx.getMessage());
+                        }
                     }
                 }
             }
@@ -154,25 +162,100 @@ public class MembresiaService {
                     stmt.setInt(1, usuarioId);
                     try (ResultSet rs = stmt.executeQuery()) {
                         while (rs.next()) {
-                            LocalDate fechaVencimiento = rs.getDate("fecha_vencimiento").toLocalDate();
-                            // Solo agregar si la membresía no está vencida
-                            if (fechaVencimiento.isAfter(hoyServidor) || fechaVencimiento.isEqual(hoyServidor)) {
-                                Membresia m = new Membresia(
-                                    rs.getInt("id"),
-                                    rs.getInt("usuario_id"),
-                                    rs.getString("tipo_membresia"),
-                                    rs.getDate("fecha_inicio").toLocalDate(),
-                                    fechaVencimiento,
-                                    rs.getDouble("precio"),
-                                    rs.getString("estado"),
-                                    rs.getString("fecha_registro")
-                                );
-                                membresiasActivas.add(m);
+                            try {
+                                LocalDate fechaVencimiento = LocalDate.parse(rs.getString("fecha_vencimiento"));
+                                // Solo agregar si la membresía no está vencida
+                                if (fechaVencimiento.isAfter(hoyServidor) || fechaVencimiento.isEqual(hoyServidor)) {
+                                    Membresia m = new Membresia(
+                                        rs.getInt("id"),
+                                        rs.getInt("usuario_id"),
+                                        rs.getString("tipo_membresia"),
+                                        LocalDate.parse(rs.getString("fecha_inicio")),
+                                        fechaVencimiento,
+                                        rs.getDouble("precio"),
+                                        rs.getString("estado"),
+                                        rs.getString("fecha_registro")
+                                    );
+                                    membresiasActivas.add(m);
+                                }
+                            } catch (Exception dateEx) {
+                                logger.log(Level.SEVERE, "Error al parsear fechas: " + dateEx.getMessage());
                             }
                         }
                     }
                 } catch (SQLException e) {
                     logger.log(Level.SEVERE, "Error al obtener membresías activas", e);
+                }
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "Error al conectar a base de datos", e);
+            }
+            return membresiasActivas;
+        }
+    }
+
+    /**
+     * Obtiene todas las membresías activas de un usuario por documento (para MongoDB y SQLite)
+     * @param documento Número de documento del usuario
+     * @return Lista de membresías activas
+     */
+    public List<Membresia> obtenerMembresiasActivasPorDocumento(String documento) {
+        if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
+            List<Membresia> membresiasActivas = new ArrayList<>();
+            LocalDate hoyServidor = TimeService.obtenerFechaDelServidor();
+            Document doc = MongoDBService.obtenerMembresiaPorDocumento(documento);
+            if (doc != null) {
+                try {
+                    LocalDate fechaVencimiento = LocalDate.parse(doc.getString("fechaVencimiento"));
+                    if (fechaVencimiento.isAfter(hoyServidor) || fechaVencimiento.isEqual(hoyServidor)) {
+                        Membresia m = new Membresia(
+                            0, // id no se usa en Mongo
+                            0, // usuarioId no se usa en Mongo
+                            doc.getString("tipo"),
+                            LocalDate.parse(doc.getString("fechaInicio")),
+                            fechaVencimiento,
+                            100.0, // precio no almacenado
+                            doc.getString("estado"),
+                            "" // fechaRegistro no almacenado
+                        );
+                        membresiasActivas.add(m);
+                    }
+                } catch (Exception e) {
+                    logger.log(Level.SEVERE, "Error al parsear membresía de MongoDB: " + e.getMessage());
+                }
+            }
+            return membresiasActivas;
+        } else {
+            // Para DBs relacionales (SQLite, MySQL), buscar por documento
+            List<Membresia> membresiasActivas = new ArrayList<>();
+            LocalDate hoyServidor = TimeService.obtenerFechaDelServidor();
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                String sql = "SELECT m.* FROM membresias m INNER JOIN usuarios u ON m.usuario_id = u.id WHERE u.documento = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setString(1, documento);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        while (rs.next()) {
+                            try {
+                                LocalDate fechaVencimiento = LocalDate.parse(rs.getString("fecha_vencimiento"));
+                                if (fechaVencimiento.isAfter(hoyServidor) || fechaVencimiento.isEqual(hoyServidor)) {
+                                    Membresia m = new Membresia(
+                                        rs.getInt("id"),
+                                        rs.getInt("usuario_id"),
+                                        rs.getString("tipo_membresia"),
+                                        LocalDate.parse(rs.getString("fecha_inicio")),
+                                        fechaVencimiento,
+                                        rs.getDouble("precio"),
+                                        rs.getString("estado"),
+                                        rs.getString("fecha_registro")
+                                    );
+                                    membresiasActivas.add(m);
+                                }
+                            } catch (Exception dateEx) {
+                                logger.log(Level.SEVERE, "Error al parsear fechas de membresía: " + dateEx.getMessage());
+                            }
+                        }
+                    }
+                } catch (SQLException e) {
+                    logger.log(Level.SEVERE, "Error al obtener membresías por documento", e);
                 }
             } catch (SQLException e) {
                 logger.log(Level.SEVERE, "Error al conectar a base de datos", e);

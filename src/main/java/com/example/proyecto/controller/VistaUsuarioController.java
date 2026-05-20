@@ -98,7 +98,7 @@ public class VistaUsuarioController {
 
     private void cargarEstadoMembresia(Usuario usuario) {
         new Thread(() -> {
-            List<Membresia> membresiasActivas = membresiaService.obtenerMembresiasActivasDelUsuario(usuario.getId());
+            List<Membresia> membresiasActivas = membresiaService.obtenerMembresiasActivasPorDocumento(usuario.getDocumento());
 
             javafx.application.Platform.runLater(() -> {
                 if (!membresiasActivas.isEmpty()) {
