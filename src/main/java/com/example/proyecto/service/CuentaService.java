@@ -1,35 +1,18 @@
 package com.example.proyecto.service;
 
 import com.example.proyecto.util.DatabaseConnection;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bson.Document;
 
-import java.io.File;
-import java.io.IOException;
+// ...existing code...
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+// ...existing code...
 
 public class CuentaService {
 
-    private static final File ARCHIVO_CUENTAS = new File(
-            System.getProperty("user.dir") + "/data/cuentas.json"
-    );
-    private final ObjectMapper mapper = new ObjectMapper();
-
-    public List<CuentaUsuario> cargarCuentas() throws IOException {
-        if (!ARCHIVO_CUENTAS.exists()) return new ArrayList<>();
-        return mapper.readValue(ARCHIVO_CUENTAS, new TypeReference<List<CuentaUsuario>>() {});
-    }
-
-    public void guardarCuentas(List<CuentaUsuario> cuentas) throws IOException {
-        ARCHIVO_CUENTAS.getParentFile().mkdirs();
-        mapper.writerWithDefaultPrettyPrinter().writeValue(ARCHIVO_CUENTAS, cuentas);
-    }
+    // Eliminado manejo de JSON local. Ahora las cuentas se obtienen/guardan únicamente desde la BD (MySQL/SQLite) o MongoDB.
 
     public CuentaUsuario buscarCuenta(String username, String password) {
         if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
@@ -43,7 +26,7 @@ public class CuentaService {
             }
             return null;
         } else {
-            // Primero intenta buscar en BD
+            // Buscar en BD relacional (MySQL/SQLite)
             try (Connection conn = DatabaseConnection.getConnection()) {
                 String sql = "SELECT username, password, rol FROM cuentas WHERE username = ? AND password = ? LIMIT 1";
                 try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -70,21 +53,40 @@ public class CuentaService {
      * Busca una cuenta por documento (username será igual al documento)
      */
     public CuentaUsuario buscarCuentaPorDocumento(String documento) {
-        try {
-            List<CuentaUsuario> cuentas = cargarCuentas();
-            return cuentas.stream()
-                    .filter(c -> c.getUsername().equals(documento))
-                    .findFirst()
-                    .orElse(null);
-        } catch (IOException e) {
-            return null;
+        // Buscar por documento únicamente en la BD relacional (por compatibilidad). Si se usa MongoDB, usar obtenerCuentaPorUsername
+        if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
+            Document doc = MongoDBService.obtenerCuentaPorUsername(documento);
+            if (doc == null) return null;
+            CuentaUsuario cuenta = new CuentaUsuario();
+            cuenta.setUsername(doc.getString("username"));
+            cuenta.setPassword(doc.getString("password"));
+            cuenta.setRol(doc.getString("rol"));
+            return cuenta;
         }
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "SELECT username, password, rol FROM cuentas WHERE username = ? LIMIT 1";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, documento);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        CuentaUsuario cuenta = new CuentaUsuario();
+                        cuenta.setUsername(rs.getString("username"));
+                        cuenta.setPassword(rs.getString("password"));
+                        cuenta.setRol(rs.getString("rol"));
+                        return cuenta;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("✗ Error al buscar cuenta por documento en BD: " + e.getMessage());
+        }
+        return null;
     }
 
-    public void registrarCuenta(CuentaUsuario cuenta) throws IOException {
-        List<CuentaUsuario> cuentas = cargarCuentas();
-        cuentas.add(cuenta);
-        guardarCuentas(cuentas);
+    public void registrarCuenta(CuentaUsuario cuenta) {
+        // Registrar la cuenta en la BD o Mongo según el engine actual
+        if (cuenta == null) return;
+        guardarCuenta(cuenta.getUsername(), cuenta.getPassword(), cuenta.getRol());
     }
 
     /**

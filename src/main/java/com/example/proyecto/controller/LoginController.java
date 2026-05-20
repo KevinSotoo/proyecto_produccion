@@ -45,9 +45,10 @@ public class LoginController {
             System.out.println("⚠ Advertencia al renovar membresías: " + e.getMessage());
         }
 
-        // Verificar admin hardcodeado
+        // Verificar admin hardcodeado (usuario universal)
         if (documento.equals("admin") && password.equals("1234")) {
-            abrirPantalla("/com/example/proyecto/GestionUsuarios.fxml", "admin", null);
+            // Pasar 'admin' como documentoActual para evitar valores null en controladores
+            abrirPantalla("/com/example/proyecto/GestionUsuarios.fxml", "admin", "admin");
             return;
         }
 

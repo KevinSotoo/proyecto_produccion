@@ -15,7 +15,7 @@ import java.util.List;
  * Proporciona métodos CRUD para las colecciones: usuarios, cuentas y abandonos
  */
 public class MongoDBService {
-    private static final String CONNECTION_STRING = "mongodb://172.30.16.104:27017";
+    private static final String CONNECTION_STRING = "mongodb://172.30.16.49:27017";
     private static final String DATABASE_NAME = "gym_db";
     private static MongoClient mongoClient;
     private static MongoDatabase database;

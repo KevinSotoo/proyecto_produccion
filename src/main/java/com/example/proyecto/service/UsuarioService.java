@@ -2,11 +2,8 @@ package com.example.proyecto.service;
 
 import com.example.proyecto.model.Usuario;
 import com.example.proyecto.util.DatabaseConnection;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bson.Document;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,30 +15,14 @@ import java.util.stream.Collectors;
 
 public class UsuarioService {
     private static final Logger logger = Logger.getLogger(UsuarioService.class.getName());
-    private static final File ARCHIVO_DATOS = new File(
-            System.getProperty("user.dir") + "/data/gimnasio_usuarios.json"
-    );
-    private final ObjectMapper mapper = new ObjectMapper();
-    private boolean usarBD = true; // Bandera para usar BD
 
     public void guardar(List<Usuario> usuarios) throws IOException {
-        if (usarBD) {
-            guardarEnBD(usuarios);
-        } else {
-            if (!ARCHIVO_DATOS.getParentFile().mkdirs() && !ARCHIVO_DATOS.getParentFile().exists()) {
-                throw new IOException("No se pudo crear el directorio");
-            }
-            mapper.writerWithDefaultPrettyPrinter().writeValue(ARCHIVO_DATOS, usuarios);
-        }
+        // Guardar siempre en la BD (relacional o MongoDB)
+        guardarEnBD(usuarios);
     }
 
     public List<Usuario> cargar() throws IOException {
-        if (usarBD) {
-            return cargarDeBD();
-        } else {
-            if (!ARCHIVO_DATOS.exists()) return new ArrayList<>();
-            return mapper.readValue(ARCHIVO_DATOS, new TypeReference<>() {});
-        }
+        return cargarDeBD();
     }
 
     // Métodos para trabajar con BD
@@ -99,17 +80,22 @@ public class UsuarioService {
             List<Document> docs = MongoDBService.obtenerTodosUsuarios();
             List<Usuario> usuarios = new ArrayList<>();
             for (Document doc : docs) {
+                int edad = getIntFromDoc(doc, "edad");
+                double peso = getDoubleFromDoc(doc, "peso");
+                double altura = getDoubleFromDoc(doc, "altura");
+                double calorias = getDoubleFromDoc(doc, "calorias");
+                boolean abandonado = doc.getBoolean("abandonado") != null ? doc.getBoolean("abandonado") : false;
                 Usuario u = new Usuario(
                     0, // id not used in MongoDB
                     doc.getString("nombre"),
-                    doc.getInteger("edad"),
-                    doc.getDouble("peso"),
-                    doc.getDouble("altura"),
+                    edad,
+                    peso,
+                    altura,
                     doc.getString("objetivo"),
-                    doc.getDouble("calorias"),
+                    calorias,
                     doc.getString("sexo"),
                     doc.getString("documento"),
-                    doc.getBoolean("abandonado"),
+                    abandonado,
                     doc.getString("tipoMembresia")
                 );
                 usuarios.add(u);
@@ -141,32 +127,23 @@ public class UsuarioService {
                 System.out.println("✓ Datos cargados desde BD: " + usuarios.size() + " usuarios");
             } catch (SQLException e) {
                 System.out.println("✗ Error al cargar desde BD: " + e.getMessage());
-                System.out.println("⚠ Intentando cargar desde JSON...");
-                try {
-                    if (ARCHIVO_DATOS.exists()) {
-                        usuarios = mapper.readValue(ARCHIVO_DATOS, new TypeReference<>() {});
-                        usarBD = false; // Cambiar a JSON si BD no está disponible
-                    }
-                } catch (IOException ioException) {
-                    logger.log(Level.SEVERE, "Error al cargar desde JSON", ioException);
-                }
+                logger.log(Level.SEVERE, "Error al cargar desde BD", e);
+                // No hacemos fallback a JSON: asumimos que la BD (o Mongo) debe estar disponible
             }
             return usuarios;
         }
     }
 
     public void eliminarUsuario(int usuarioId) {
-        if (usarBD) {
-            try (Connection conn = DatabaseConnection.getConnection()) {
-                String sql = "DELETE FROM usuarios WHERE id = ?";
-                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    stmt.setInt(1, usuarioId);
-                    stmt.executeUpdate();
-                    System.out.println("✓ Usuario eliminado de BD");
-                }
-            } catch (SQLException e) {
-                System.out.println("✗ Error al eliminar usuario: " + e.getMessage());
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "DELETE FROM usuarios WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, usuarioId);
+                stmt.executeUpdate();
+                System.out.println("✓ Usuario eliminado de BD");
             }
+        } catch (SQLException e) {
+            System.out.println("✗ Error al eliminar usuario: " + e.getMessage());
         }
     }
 
@@ -237,17 +214,22 @@ public class UsuarioService {
         if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
             Document doc = MongoDBService.obtenerUsuarioPorDocumento(documento);
             if (doc != null) {
+                int edad = getIntFromDoc(doc, "edad");
+                double peso = getDoubleFromDoc(doc, "peso");
+                double altura = getDoubleFromDoc(doc, "altura");
+                double calorias = getDoubleFromDoc(doc, "calorias");
+                boolean abandonado = doc.getBoolean("abandonado") != null ? doc.getBoolean("abandonado") : false;
                 return new Usuario(
                     0, // id not used in MongoDB
                     doc.getString("nombre"),
-                    doc.getInteger("edad"),
-                    doc.getDouble("peso"),
-                    doc.getDouble("altura"),
+                    edad,
+                    peso,
+                    altura,
                     doc.getString("objetivo"),
-                    doc.getDouble("calorias"),
+                    calorias,
                     doc.getString("sexo"),
                     doc.getString("documento"),
-                    doc.getBoolean("abandonado") != null ? doc.getBoolean("abandonado") : false,
+                    abandonado,
                     doc.getString("tipoMembresia")
                 );
             }
@@ -305,5 +287,24 @@ public class UsuarioService {
         } catch (SQLException e) {
             System.err.println("✗ Error al guardar usuario: " + e.getMessage());
         }
+    }
+
+    // ===== Helpers para lectura segura desde Document (Mongo) =====
+    private static int getIntFromDoc(Document doc, String key) {
+        Object v = doc.get(key);
+        if (v instanceof Number) return ((Number) v).intValue();
+        if (v instanceof String) {
+            try { return Integer.parseInt((String) v); } catch (NumberFormatException ignored) {}
+        }
+        return 0;
+    }
+
+    private static double getDoubleFromDoc(Document doc, String key) {
+        Object v = doc.get(key);
+        if (v instanceof Number) return ((Number) v).doubleValue();
+        if (v instanceof String) {
+            try { return Double.parseDouble((String) v); } catch (NumberFormatException ignored) {}
+        }
+        return 0.0;
     }
 }

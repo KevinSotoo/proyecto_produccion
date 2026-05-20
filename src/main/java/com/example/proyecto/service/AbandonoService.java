@@ -2,11 +2,7 @@ package com.example.proyecto.service;
 
 import com.example.proyecto.model.Abandono;
 import com.example.proyecto.util.DatabaseConnection;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
@@ -16,56 +12,18 @@ import java.util.List;
 
 public class AbandonoService {
 
-    private static final File ARCHIVO_DATOS = new File(
-            System.getProperty("user.dir") + "/data/abandonos.json"
-    );
-    private final ObjectMapper mapper;
-    private boolean usarBD = true; // Bandera para usar BD
-
-    public AbandonoService() {
-        this.mapper = new ObjectMapper();
-        this.mapper.registerModule(new JavaTimeModule());
-    }
+    // Eliminado manejo de JSON local. Abandonos se gestionan en la BD o MongoDB.
 
     public void guardar(List<Abandono> abandonos) throws IOException {
-        if (usarBD) {
-            guardarEnBD(abandonos);
-        } else {
-            File parentDir = ARCHIVO_DATOS.getParentFile();
-            if (parentDir != null && !parentDir.exists()) {
-                parentDir.mkdirs();
-            }
-            mapper.writerWithDefaultPrettyPrinter().writeValue(ARCHIVO_DATOS, abandonos);
-        }
+        guardarEnBD(abandonos);
     }
 
     public List<Abandono> cargar() throws IOException {
-        if (usarBD) {
-            return cargarDeBD();
-        } else {
-            if (!ARCHIVO_DATOS.exists()) return new ArrayList<>();
-            try {
-                return mapper.readValue(ARCHIVO_DATOS, new TypeReference<>() {});
-            } catch (IOException e) {
-                return new ArrayList<>();
-            }
-        }
+        return cargarDeBD();
     }
 
     public void agregarAbandono(String nombreUsuario, String motivo) throws IOException {
-        if (usarBD) {
-            agregarAbandonoBD(nombreUsuario, motivo);
-        } else {
-            List<Abandono> abandonos = cargar();
-            int nuevoId = abandonos.isEmpty() ? 1 : abandonos.stream()
-                    .mapToInt(Abandono::getId)
-                    .max()
-                    .orElse(0) + 1;
-
-            Abandono nuevoAbandono = new Abandono(nuevoId, nombreUsuario, TimeService.obtenerFechaDelServidor(), motivo);
-            abandonos.add(nuevoAbandono);
-            guardar(abandonos);
-        }
+        agregarAbandonoBD(nombreUsuario, motivo);
     }
 
     // Métodos para trabajar con BD
@@ -111,15 +69,7 @@ public class AbandonoService {
             System.out.println("✓ Abandonos cargados desde BD: " + abandonos.size() + " registros");
         } catch (SQLException e) {
             System.out.println("✗ Error al cargar abandonos desde BD: " + e.getMessage());
-            System.out.println("⚠ Intentando cargar desde JSON...");
-            try {
-                if (ARCHIVO_DATOS.exists()) {
-                    abandonos = mapper.readValue(ARCHIVO_DATOS, new TypeReference<>() {});
-                    usarBD = false; // Cambiar a JSON si BD no está disponible
-                }
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+            e.printStackTrace();
         }
         return abandonos;
     }
@@ -143,17 +93,15 @@ public class AbandonoService {
     }
 
     public void eliminarAbandono(int abandonoId) {
-        if (usarBD) {
-            try (Connection conn = DatabaseConnection.getConnection()) {
-                String sql = "DELETE FROM abandonos WHERE id = ?";
-                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    stmt.setInt(1, abandonoId);
-                    stmt.executeUpdate();
-                    System.out.println("✓ Abandono eliminado de BD");
-                }
-            } catch (SQLException e) {
-                System.out.println("✗ Error al eliminar abandono: " + e.getMessage());
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "DELETE FROM abandonos WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, abandonoId);
+                stmt.executeUpdate();
+                System.out.println("✓ Abandono eliminado de BD");
             }
+        } catch (SQLException e) {
+            System.out.println("✗ Error al eliminar abandono: " + e.getMessage());
         }
     }
 
