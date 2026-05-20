@@ -36,8 +36,6 @@
             <Button text="Causas de Abandono" maxWidth="Infinity"
                     onAction="#verAbandonos"
                     style="-fx-background-radius: 10;"/>
-            <Button text="Reportes" maxWidth="Infinity"
-                    style="-fx-background-radius: 10;"/>
             <Button text="Estadísticas" maxWidth="Infinity"
                     style="-fx-background-color: #2C5FA8; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10;"/>
             <Button text="Salir" maxWidth="Infinity"
@@ -139,6 +137,15 @@
                         </VBox>
 
                     </HBox>
+                    <Separator/>
+
+                    <!-- Reportes de Membresías -->
+                    <Label text="Reportes de Membresías" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                    <VBox spacing="10" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8,0,0,2);">
+                        <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+                        <Label text="Resumen de planes por categoría y vencimientos:"/>
+                        <TextArea fx:id="reportesArea" editable="false" wrapText="true" prefHeight="220" prefWidth="800"/>
+                    </VBox>
 
                 </VBox>
             </content>

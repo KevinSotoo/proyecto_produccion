@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
+import com.example.proyecto.service.TimeService;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class AbandonoService {
                     .max()
                     .orElse(0) + 1;
 
-            Abandono nuevoAbandono = new Abandono(nuevoId, nombreUsuario, LocalDate.now(), motivo);
+            Abandono nuevoAbandono = new Abandono(nuevoId, nombreUsuario, TimeService.obtenerFechaDelServidor(), motivo);
             abandonos.add(nuevoAbandono);
             guardar(abandonos);
         }
@@ -126,8 +127,8 @@ public class AbandonoService {
     private void agregarAbandonoBD(String nombreUsuario, String motivo) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             String sql = "INSERT INTO abandonos (usuario_id, fecha_abandono, motivo) SELECT id, ?, ? FROM usuarios WHERE nombre = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setDate(1, Date.valueOf(LocalDate.now()));
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setDate(1, Date.valueOf(TimeService.obtenerFechaDelServidor()));
                 stmt.setString(2, motivo);
                 stmt.setString(3, nombreUsuario);
                 int rowsAffected = stmt.executeUpdate();

@@ -49,7 +49,8 @@ public class ActualizadorMembresias {
                 "FROM membresias";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sqlVerificar)) {
-            pstmt.setDate(1, Date.valueOf(LocalDate.now()));
+            // Usar la fecha del servidor para la verificación
+            pstmt.setDate(1, Date.valueOf(TimeService.obtenerFechaDelServidor()));
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     int total = rs.getInt("total");

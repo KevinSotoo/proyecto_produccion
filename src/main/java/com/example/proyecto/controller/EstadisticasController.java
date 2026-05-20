@@ -2,7 +2,11 @@ package com.example.proyecto.controller;
 
 import com.example.proyecto.Main;
 import com.example.proyecto.model.Usuario;
+import com.example.proyecto.model.Membresia;
 import com.example.proyecto.service.UsuarioService;
+import com.example.proyecto.service.MembresiaService;
+import com.example.proyecto.service.TimeService;
+import javafx.scene.control.TextArea;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,8 +32,10 @@ public class EstadisticasController {
     @FXML private Label edadFemeninoLabel;
     @FXML private Label pesoFemeninoLabel;
     @FXML private Label alturaFemeninoLabel;
+    @FXML private TextArea reportesArea;
 
     private final UsuarioService service = new UsuarioService();
+    private final MembresiaService membresiaService = new MembresiaService();
 
     @FXML
     public void initialize() {
@@ -80,6 +86,51 @@ public class EstadisticasController {
                         femeninos.stream().mapToDouble(Usuario::getPeso).average().orElse(0)));
                 alturaFemeninoLabel.setText(String.format("Altura: %.1f cm",
                         femeninos.stream().mapToDouble(Usuario::getAltura).average().orElse(0)));
+            }
+
+            // ── Reportes de membresías (planes por categoría y vencidos) ──
+            try {
+                List<Membresia> todasMembresias = membresiaService.cargar();
+                java.time.LocalDate hoy = TimeService.obtenerFechaDelServidor();
+
+                // Contar por tipo y estado
+                java.util.Map<String, Integer> activasPorTipo = new java.util.HashMap<>();
+                java.util.List<Membresia> vencidasList = new java.util.ArrayList<>();
+
+                for (Membresia m : todasMembresias) {
+                    if (m.getFechaVencimiento() == null) continue;
+                    if (m.getFechaVencimiento().isBefore(hoy)) {
+                        vencidasList.add(m);
+                    } else {
+                        activasPorTipo.put(m.getTipoMembresia(), activasPorTipo.getOrDefault(m.getTipoMembresia(), 0) + 1);
+                    }
+                }
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("Total membresías: ").append(todasMembresias.size()).append("\n\n");
+                sb.append("Membresías activas por categoría:\n");
+                if (activasPorTipo.isEmpty()) {
+                    sb.append("  (ninguna activa)\n");
+                } else {
+                    activasPorTipo.forEach((tipo, cnt) -> sb.append("  • ").append(tipo).append(": ").append(cnt).append("\n"));
+                }
+
+                sb.append("\nMembresías vencidas (lista corta):\n");
+                if (vencidasList.isEmpty()) {
+                    sb.append("  (ninguna vencida)\n");
+                } else {
+                    int limit = Math.min(10, vencidasList.size());
+                    for (int i = 0; i < limit; i++) {
+                        Membresia m = vencidasList.get(i);
+                        sb.append("  • ID:").append(m.getId()).append(" Usuario:").append(m.getUsuarioId())
+                          .append(" Tipo:").append(m.getTipoMembresia()).append(" Vence:").append(m.getFechaVencimiento()).append("\n");
+                    }
+                    if (vencidasList.size() > limit) sb.append("  … y ").append(vencidasList.size() - limit).append(" más\n");
+                }
+
+                reportesArea.setText(sb.toString());
+            } catch (Exception e) {
+                reportesArea.setText("Error al generar reportes: " + e.getMessage());
             }
 
         } catch (IOException e) {

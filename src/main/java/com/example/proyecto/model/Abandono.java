@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javafx.beans.property.*;
 
 import java.time.LocalDate;
+import com.example.proyecto.service.TimeService;
 
 public class Abandono {
     private final IntegerProperty id;
@@ -17,7 +18,7 @@ public class Abandono {
         this.id = new SimpleIntegerProperty(0);
         this.usuarioId = new SimpleIntegerProperty(0);
         this.nombreUsuario = new SimpleStringProperty("");
-        this.fechaAbandono = new SimpleObjectProperty<>(LocalDate.now());
+        this.fechaAbandono = new SimpleObjectProperty<>(TimeService.obtenerFechaDelServidor());
         this.motivo = new SimpleStringProperty("");
     }
 

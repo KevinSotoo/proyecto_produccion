@@ -34,8 +34,6 @@
             <Button text="Ver Abandonos" maxWidth="Infinity"
                     onAction="#mostrarAbandonos"
                     style="-fx-background-color: #2C5FA8; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10;"/>
-            <Button text="Reportes" maxWidth="Infinity"
-                    style="-fx-background-radius: 10;"/>
             <Button fx:id="btnEstadisticas" text="Estadísticas" maxWidth="Infinity"
                     onAction="#irEstadisticas"
                     style="-fx-background-radius: 10;"/>

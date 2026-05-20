@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import com.example.proyecto.service.TimeService;
 import java.util.Random;
 
 public class RegistroController {
@@ -73,7 +74,8 @@ public class RegistroController {
             // Crear membresía automáticamente con duración variable
             Random random = new Random();
             int dias = (random.nextInt(3) + 1) * 30; // 30, 60 o 90 días
-            Membresia membresia = new Membresia(0, usuarioId, "Básica", LocalDate.now(), LocalDate.now().plusDays(dias), 100.0, "activa", LocalDateTime.now().toString());
+            LocalDate hoyServidor = TimeService.obtenerFechaDelServidor();
+            Membresia membresia = new Membresia(0, usuarioId, "Básica", hoyServidor, hoyServidor.plusDays(dias), 100.0, "activa", TimeService.obtenerHoraDelServidor().toString());
             membresiaService.guardar(membresia);
 
             mostrarExito("¡Cuenta creada exitosamente! Ya puedes iniciar sesión.");
