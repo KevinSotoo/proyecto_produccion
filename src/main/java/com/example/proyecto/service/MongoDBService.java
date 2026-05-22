@@ -66,6 +66,11 @@ public class MongoDBService {
                 System.out.println("✓ Colección 'membresias' creada");
             }
 
+            if (!listaColecciones.contains("Registro")) {
+                database.createCollection("Registro");
+                System.out.println("✓ Colección 'Registro' creada");
+            }
+
             // Crear índices únicos
             database.getCollection("cuentas").createIndex(new Document("username", 1));
             database.getCollection("usuarios").createIndex(new Document("documento", 1));
@@ -112,6 +117,8 @@ public class MongoDBService {
                     .append("fechaRegistro", LocalDateTime.now().toString());
 
             collection.insertOne(usuario);
+            AuditService.registrarInsercion("usuarios",
+                "Usuario insertado en MongoDB - Nombre: " + nombre + ", Documento: " + documento);
             System.out.println("✓ Usuario insertado: " + nombre);
         } catch (Exception e) {
             System.err.println("✗ Error al insertar usuario: " + e.getMessage());
@@ -179,6 +186,9 @@ public class MongoDBService {
                     .append("tipoMembresia", tipoMembresia);
 
             collection.updateOne(Filters.eq("_id", id), new Document("$set", actualizacion));
+            AuditService.registrarModificacion("usuarios",
+                "Usuario actualizado en MongoDB - ID: " + id,
+                "Nombre: " + nombre + ", Abandonado: " + abandonado);
             System.out.println("✓ Usuario actualizado");
         } catch (Exception e) {
             System.err.println("✗ Error al actualizar usuario: " + e.getMessage());
@@ -192,6 +202,8 @@ public class MongoDBService {
         try {
             MongoCollection<Document> collection = database.getCollection("usuarios");
             collection.deleteOne(Filters.eq("_id", id));
+            AuditService.registrarEliminacion("usuarios",
+                "Usuario eliminado en MongoDB - ID: " + id);
             System.out.println("✓ Usuario eliminado");
         } catch (Exception e) {
             System.err.println("✗ Error al eliminar usuario: " + e.getMessage());
@@ -214,6 +226,8 @@ public class MongoDBService {
                     .append("fechaCreacion", LocalDateTime.now().toString());
 
             collection.insertOne(cuenta);
+            AuditService.registrarInsercion("cuentas",
+                "Cuenta insertada en MongoDB - Username: " + username + ", Rol: " + rol);
             System.out.println("✓ Cuenta insertada: " + username);
         } catch (Exception e) {
             System.err.println("✗ Error al insertar cuenta: " + e.getMessage());
@@ -282,6 +296,9 @@ public class MongoDBService {
                     .append("rol", nuevoRol);
 
             collection.updateOne(Filters.eq("username", username), new Document("$set", actualizacion));
+            AuditService.registrarModificacion("cuentas",
+                "Cuenta actualizada en MongoDB - Username: " + username,
+                "Rol: " + nuevoRol);
             System.out.println("✓ Cuenta actualizada: " + username);
         } catch (Exception e) {
             System.err.println("✗ Error al actualizar cuenta: " + e.getMessage());
@@ -295,6 +312,8 @@ public class MongoDBService {
         try {
             MongoCollection<Document> collection = database.getCollection("cuentas");
             collection.deleteOne(Filters.eq("username", username));
+            AuditService.registrarEliminacion("cuentas",
+                "Cuenta eliminada en MongoDB - Username: " + username);
             System.out.println("✓ Cuenta eliminada: " + username);
         } catch (Exception e) {
             System.err.println("✗ Error al eliminar cuenta: " + e.getMessage());
@@ -317,6 +336,8 @@ public class MongoDBService {
                     .append("fechaRegistro", LocalDateTime.now().toString());
 
             collection.insertOne(abandono);
+            AuditService.registrarInsercion("abandonos",
+                "Abandono insertado en MongoDB - Documento: " + documento + ", Motivo: " + motivo);
             System.out.println("✓ Abandono registrado para: " + documento);
         } catch (Exception e) {
             System.err.println("✗ Error al insertar abandono: " + e.getMessage());
@@ -358,6 +379,8 @@ public class MongoDBService {
         try {
             MongoCollection<Document> collection = database.getCollection("abandonos");
             collection.deleteOne(Filters.eq("_id", id));
+            AuditService.registrarEliminacion("abandonos",
+                "Abandono eliminado en MongoDB - ID: " + id);
             System.out.println("✓ Abandono eliminado");
         } catch (Exception e) {
             System.err.println("✗ Error al eliminar abandono: " + e.getMessage());
@@ -381,6 +404,8 @@ public class MongoDBService {
                     .append("estado", "activa");
 
             collection.insertOne(membresia);
+            AuditService.registrarInsercion("membresias",
+                "Membresía insertada en MongoDB - Documento: " + documento + ", Tipo: " + tipo);
             System.out.println("✓ Membresía insertada para: " + documento);
         } catch (Exception e) {
             System.err.println("✗ Error al insertar membresía: " + e.getMessage());
@@ -427,6 +452,9 @@ public class MongoDBService {
                     .append("estado", estado);
 
             collection.updateOne(Filters.eq("_id", id), new Document("$set", actualizacion));
+            AuditService.registrarModificacion("membresias",
+                "Membresía actualizada en MongoDB - ID: " + id,
+                "Tipo: " + tipo + ", Vencimiento: " + fechaVencimiento + ", Estado: " + estado);
             System.out.println("✓ Membresía actualizada");
         } catch (Exception e) {
             System.err.println("✗ Error al actualizar membresía: " + e.getMessage());

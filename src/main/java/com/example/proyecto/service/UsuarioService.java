@@ -30,6 +30,8 @@ public class UsuarioService {
         if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
             for (Usuario u : usuarios) {
                 MongoDBService.insertarUsuario(u.getNombre(), u.getEdad(), u.getPeso(), u.getAltura(), u.getObjetivo(), u.getCalorias(), u.getSexo(), u.getDocumento());
+                AuditService.registrarInsercion("usuarios",
+                    "Usuario insertado - Nombre: " + u.getNombre() + ", Documento: " + u.getDocumento());
             }
         } else {
             try (Connection conn = DatabaseConnection.getConnection()) {
@@ -48,6 +50,8 @@ public class UsuarioService {
                             stmt.setDouble(8, u.getCalorias());
                             stmt.setString(9, u.getTipoMembresia());
                             stmt.executeUpdate();
+                            AuditService.registrarInsercion("usuarios",
+                                "Usuario insertado - Nombre: " + u.getNombre() + ", Documento: " + u.getDocumento());
                         }
                     } else {
                         // Actualizar existente
@@ -63,6 +67,9 @@ public class UsuarioService {
                             stmt.setString(8, u.getTipoMembresia());
                             stmt.setInt(9, u.getId());
                             stmt.executeUpdate();
+                            AuditService.registrarModificacion("usuarios",
+                                "Usuario actualizado - ID: " + u.getId(),
+                                "Nombre: " + u.getNombre() + ", Documento: " + u.getDocumento());
                         }
                     }
                 }
@@ -140,6 +147,7 @@ public class UsuarioService {
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setInt(1, usuarioId);
                 stmt.executeUpdate();
+                AuditService.registrarEliminacion("usuarios", "Usuario eliminado - ID: " + usuarioId);
                 System.out.println("✓ Usuario eliminado de BD");
             }
         } catch (SQLException e) {
@@ -278,11 +286,13 @@ public class UsuarioService {
                 stmt.setDouble(5, usuario.getPeso());
                 stmt.setDouble(6, usuario.getAltura());
                 stmt.setString(7, usuario.getObjetivo());
-            stmt.setDouble(8, usuario.getCalorias());
-            stmt.setString(9, usuario.getTipoMembresia());
-            stmt.executeUpdate();
-            conn.commit();
-            System.out.println("✓ Usuario " + usuario.getNombre() + " guardado correctamente");
+                stmt.setDouble(8, usuario.getCalorias());
+                stmt.setString(9, usuario.getTipoMembresia());
+                stmt.executeUpdate();
+                AuditService.registrarInsercion("usuarios",
+                    "Usuario guardado - Nombre: " + usuario.getNombre() + ", Documento: " + usuario.getDocumento());
+                conn.commit();
+                System.out.println("✓ Usuario " + usuario.getNombre() + " guardado correctamente");
             }
         } catch (SQLException e) {
             System.err.println("✗ Error al guardar usuario: " + e.getMessage());

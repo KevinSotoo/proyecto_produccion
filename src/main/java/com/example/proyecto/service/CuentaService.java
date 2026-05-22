@@ -104,6 +104,8 @@ public class CuentaService {
                     stmt.setString(2, password);
                     stmt.setString(3, rol);
                     stmt.executeUpdate();
+                    AuditService.registrarInsercion("cuentas",
+                        "Cuenta insertada - Username: " + username + ", Rol: " + rol);
                     System.out.println("✓ Cuenta " + username + " guardada correctamente");
                 }
             } else {
@@ -115,6 +117,8 @@ public class CuentaService {
                     stmt.setString(3, rol);
                     stmt.setString(4, username); // Usar username como documento si es numérico
                     stmt.executeUpdate();
+                    AuditService.registrarInsercion("cuentas",
+                        "Cuenta insertada - Username: " + username + ", Rol: " + rol);
                     System.out.println("✓ Cuenta " + username + " guardada correctamente");
                 }
             }
@@ -130,6 +134,8 @@ public class CuentaService {
     public void guardarCuentaConUsuario(String username, String password, String documento) {
         if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
             MongoDBService.insertarCuenta(username, password, "usuario");
+            AuditService.registrarInsercion("cuentas",
+                "Cuenta insertada con usuario - Username: " + username + ", Documento: " + documento);
         } else {
             try (Connection conn = DatabaseConnection.getConnection()) {
                 String sql = "INSERT INTO cuentas (username, password, rol, usuario_id) " +
@@ -139,6 +145,8 @@ public class CuentaService {
                     stmt.setString(2, password);
                     stmt.setString(3, documento);
                     stmt.executeUpdate();
+                    AuditService.registrarInsercion("cuentas",
+                        "Cuenta insertada con usuario - Username: " + username + ", Documento: " + documento);
                     System.out.println("✓ Cuenta " + username + " guardada correctamente para usuario con documento " + documento);
                 }
             } catch (SQLException e) {

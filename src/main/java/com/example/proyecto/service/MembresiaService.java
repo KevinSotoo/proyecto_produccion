@@ -50,6 +50,9 @@ public class MembresiaService {
     public void guardar(Membresia m) {
         if (DatabaseConnection.getEngine() == DatabaseConnection.DatabaseEngine.MONGODB) {
             MongoDBService.insertarMembresia(m.getUsuarioId() + "", m.getTipoMembresia(), m.getFechaInicio(), m.getFechaVencimiento());
+            AuditService.registrarInsercion("membresias",
+                "Membresía insertada - Usuario: " + m.getUsuarioId() + ", Tipo: " + m.getTipoMembresia() +
+                ", Inicio: " + m.getFechaInicio() + ", Vencimiento: " + m.getFechaVencimiento());
         } else {
             try (Connection conn = DatabaseConnection.getConnection()) {
                 String sql = "INSERT INTO membresias (usuario_id, tipo_membresia, fecha_inicio, fecha_vencimiento, precio, estado) VALUES (?, ?, ?, ?, ?, ?)";
@@ -61,6 +64,9 @@ public class MembresiaService {
                     stmt.setDouble(5, m.getPrecio());
                     stmt.setString(6, m.getEstado());
                     stmt.executeUpdate();
+                    AuditService.registrarInsercion("membresias",
+                        "Membresía insertada - Usuario: " + m.getUsuarioId() + ", Tipo: " + m.getTipoMembresia() +
+                        ", Inicio: " + m.getFechaInicio() + ", Vencimiento: " + m.getFechaVencimiento());
                 }
             } catch (SQLException e) {
                 logger.log(Level.SEVERE, "Error al guardar membresía", e);
@@ -79,6 +85,9 @@ public class MembresiaService {
                 stmt.setString(5, m.getEstado());
                 stmt.setInt(6, m.getId());
                 stmt.executeUpdate();
+                AuditService.registrarModificacion("membresias",
+                    "Membresía actualizada - ID: " + m.getId(),
+                    "Tipo: " + m.getTipoMembresia() + ", Vencimiento: " + m.getFechaVencimiento());
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al actualizar membresía", e);
@@ -91,6 +100,7 @@ public class MembresiaService {
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setInt(1, id);
                 stmt.executeUpdate();
+                AuditService.registrarEliminacion("membresias", "Membresía eliminada - ID: " + id);
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al eliminar membresía", e);

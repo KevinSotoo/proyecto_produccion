@@ -33,6 +33,7 @@ public class AbandonoService {
             String deleteSQL = "DELETE FROM abandonos";
             try (Statement stmt = conn.createStatement()) {
                 stmt.executeUpdate(deleteSQL);
+                AuditService.registrarEliminacion("abandonos", "Todos los abandonos eliminados (limpieza)");
             }
 
             for (Abandono a : abandonos) {
@@ -42,6 +43,8 @@ public class AbandonoService {
                     stmt.setString(2, a.getMotivo());
                     stmt.setString(3, a.getNombreUsuario());
                     stmt.executeUpdate();
+                    AuditService.registrarInsercion("abandonos",
+                        "Abandono insertado - Usuario: " + a.getNombreUsuario() + ", Motivo: " + a.getMotivo());
                 }
             }
             System.out.println("✓ Abandonos guardados en BD correctamente");
@@ -79,13 +82,15 @@ public class AbandonoService {
             String sql = "INSERT INTO abandonos (usuario_id, fecha_abandono, motivo) SELECT id, ?, ? FROM usuarios WHERE nombre = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                     stmt.setDate(1, Date.valueOf(TimeService.obtenerFechaDelServidor()));
-                stmt.setString(2, motivo);
-                stmt.setString(3, nombreUsuario);
-                int rowsAffected = stmt.executeUpdate();
-                if (rowsAffected > 0) {
-                    System.out.println("✓ Abandono registrado en BD");
+                    stmt.setString(2, motivo);
+                    stmt.setString(3, nombreUsuario);
+                    int rowsAffected = stmt.executeUpdate();
+                    if (rowsAffected > 0) {
+                        AuditService.registrarInsercion("abandonos",
+                            "Abandono registrado - Usuario: " + nombreUsuario + ", Motivo: " + motivo);
+                        System.out.println("✓ Abandono registrado en BD");
+                    }
                 }
-            }
         } catch (SQLException e) {
             System.out.println("✗ Error al agregar abandono en BD: " + e.getMessage());
             e.printStackTrace();
@@ -98,6 +103,7 @@ public class AbandonoService {
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setInt(1, abandonoId);
                 stmt.executeUpdate();
+                AuditService.registrarEliminacion("abandonos", "Abandono eliminado - ID: " + abandonoId);
                 System.out.println("✓ Abandono eliminado de BD");
             }
         } catch (SQLException e) {
@@ -116,6 +122,8 @@ public class AbandonoService {
                 stmt.setDate(2, Date.valueOf(abandono.getFechaAbandono()));
                 stmt.setString(3, abandono.getMotivo());
                 stmt.executeUpdate();
+                AuditService.registrarInsercion("abandonos",
+                    "Abandono guardado - Usuario ID: " + abandono.getUsuarioId() + ", Motivo: " + abandono.getMotivo());
                 System.out.println("✓ Abandono guardado correctamente");
             }
         } catch (SQLException e) {
